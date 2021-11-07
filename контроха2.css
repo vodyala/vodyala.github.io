@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@300&display=swap');
+#imaga {
+    width: 30%;
+    height: 30%;
+}
+
+#big  {
+    color:red;
+    font-size: 28px;
+    font-family: 'Segoe Print', cursive;
+}
+#grom  {
+    width: 1000%;
+    font-size: 28px;
+    font-family: 'Inter', cursive;
+}
+#lonka  {
+    font-size: 28px;
+    font-family: 'comic sans', cursive;
+}
