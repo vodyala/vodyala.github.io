@@ -1,68 +1,593 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>vodyala</title>
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Libre+Barcode+128+Text&display=swap');
-    p {
-        color:midnightblue;
-        font-size: 500px;
-        font-family: 'Libre Barcode 128 Text', bold;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vodyala</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+
+  body {
+    margin: 0;
+    padding: 30px;
+    font-family: 'Roboto Mono', monospace;
+    background: #fefefe;
+    color: #111;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  .wrapper {
+    display: flex;
+    max-width: 1200px;
+    width: 100%;
+    gap: 30px;
+  }
+  .main-content {
+    flex: 1 1 800px;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Верхний баннер */
+  .main-banner {
+    position: relative;
+    height: 160px;
+    border: 5px solid #000;
+    border-radius: 0;
+    margin-bottom: 25px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .main-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  .main-banner:hover img {
+    transform: scale(1.05);
+  }
+  /* Подсказка (tooltip) */
+  .tooltip {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(208, 0, 0, 0.9);
+    color: white;
+    font-weight: 900;
+    padding: 6px 14px;
+    border-radius: 2px;
+    font-size: 1rem;
+    user-select: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+    z-index: 5;
+  }
+  .show-tooltip {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  /* Интро текст */
+  .intro-text {
+    font-size: 1.6rem;
+    color: #d00;
+    font-weight: 900;
+    margin-bottom: 30px;
+    user-select: none;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  /* Сетка соцсетей 4 на 2 */
+  .social-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    margin-bottom: 30px;
+  }
+  .social-item {
+    background: #fff;
+    border: 5px solid #d00;
+    border-radius: 0;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1.4rem;
+    color: #d00;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 10px;
+  }
+  .social-item:hover {
+    background: #d00;
+    color: #fff;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #d00;
+  }
+  /* Нижняя карусель */
+  .carousel-container {
+    position: relative;
+    margin-bottom: 30px;
+    border: 5px solid #d00;
+    border-radius: 0;
+    overflow: hidden;
+    height: 140px;
+    background: #fff;
+  }
+  .carousel-wrapper {
+    display: flex;
+    transition: transform 0.4s ease;
+    height: 100%;
+  }
+  .carousel-item {
+    min-width: 100%;
+    height: 140px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Убрали opacity, теперь всегда 1 */
+    opacity: 1;
+    transition: none;
+  }
+  .carousel-item:hover img {
+    opacity: 1;
+    transform: none;
+  }
+  /* Кнопки карусели - бирюзовые */
+  .carousel-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #222;
+    border: none;
+    color: #0ff;
+    font-weight: 900;
+    font-size: 2rem;
+    cursor: pointer;
+    width: 45px;
+    height: 100%;
+    user-select: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    outline: none;
+    z-index: 2;
+  }
+  .carousel-button:hover {
+    background: #0ff;
+    color: #222;
+  }
+  .carousel-button.left {
+    left: 0;
+    border-right: 5px solid #d00;
+  }
+  .carousel-button.right {
+    right: 0;
+    border-left: 5px solid #d00;
+  }
+  footer {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #d00;
+    text-align: center;
+    user-select: none;
+  }
+  /* Боковой баннер-приложение */
+  .side-banner {
+    width: 280px;
+    border: 5px solid #444;
+    border-radius: 0;
+    background: #eee;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 30px 20px;
+    user-select: none;
+  }
+  .side-banner p {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #444;
+    margin: 0;
+    line-height: 1.4;
+  }
+  .side-button {
+    margin-top: 20px;
+    background: #444;
+    color: #fff;
+    border: 5px solid #444;
+    padding: 15px 0;
+    font-weight: 900;
+    font-size: 1.4rem;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    text-transform: uppercase;
+  }
+  .side-button:hover {
+    background: #666;
+    color: #fff;
+    border-color: #666;
+  }
+  /* Всплывающее окно - обычные с красным */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+  }
+  .modal {
+    background: black;
+    border: 3px solid #d00;
+    padding: 25px 30px;
+    width: 320px;
+    max-width: 90vw;
+    text-align: center;
+    color: #d00;
+    font-weight: 900;
+    user-select: none;
+    position: relative;
+  }
+  .modal h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    text-transform: uppercase;
+    word-wrap: break-word;
+  }
+  .modal p {
+    word-wrap: break-word;
+  }
+  .modal button {
+    background: none;
+    border: 3px solid #d00;
+    color: #d00;
+    font-weight: 900;
+    font-size: 1.2rem;
+    margin: 10px 10px 0 10px;
+    padding: 10px 15px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    border-radius: 0;
+  }
+  .modal button:hover {
+    background: #d00;
+    color: black;
+  }
+  .modal .close-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    border-color: #444;
+    color: #444;
+    font-size: 1.8rem;
+    padding: 5px 10px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .modal .close-btn:hover {
+    background: #444;
+    color: white;
+  }
+  /* Кнопка перейти в обычных модалках */
+  .modal .goto-btn {
+    display: block;
+    margin: 20px auto 0 auto;
+    width: 140px;
+    border-radius: 0;
+  }
+  /* Модалка для последнего баннера NASOS - оранжевая */
+  .modal-large {
+    width: 600px;
+    max-width: 95vw;
+    background: #111;
+    border-color: #ff6c00;
+    color: #ff6c00;
+    padding: 40px 30px 20px 30px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+  .modal-large h1 {
+    font-size: 3.5rem;
+    margin: 0 0 10px 0;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .modal-large p.subtitle {
+    margin: 0 0 30px 0;
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 0.05em;
+    color: #ff6c00;
+    user-select: none;
+  }
+  .modal-large .btn-row {
+    display: flex;
+    gap: 15px;
+  }
+  .modal-large .btn-row button {
+    flex: 1;
+    white-space: nowrap;
+    padding: 12px 10px;
+    font-size: 1.25rem;
+    font-weight: 900;
+    border-radius: 0;
+    border: 3px solid #ff6c00;
+    background: none;
+    color: #ff6c00;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  .modal-large .btn-row button:first-child {
+    flex: 2;
+  }
+  .modal-large .btn-row button:hover {
+    background: #ff6c00;
+    color: black;
+  }
+  .modal-large .close-btn {
+    top: 10px;
+    right: 10px;
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: #ff6c00;
+    line-height: 1;
+    padding: 0 10px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    user-select: none;
+    position: absolute;
+  }
+  .modal-large .close-btn:hover {
+    color: #ff3d00;
+  }
+  /* Адаптив */
+  @media (max-width: 1150px) {
+    .wrapper {
+      flex-direction: column;
+      align-items: center;
     }
-    </style>
-    <style>
-       pp {
-        color:midnightblue;
-        font-size: 16px;
-        font-family: 'Lucida Console', bold;
+    .side-banner {
+      width: 100%;
+      max-width: 400px;
+      margin-top: 30px;
     }
-    </style>
-    <link rel="stylesheet" href="стаил.css">    
-    
+    .modal-large {
+      width: 90%;
+      padding: 25px 15px 20px;
+    }
+    .modal-large h1 {
+      font-size: 2.5rem;
+    }
+  }
+</style>
 </head>
 <body>
-    <div>
-        <p>Great site of the great Vodyala </p> </div>
-    <div> 
-  <div> <pp>
-         ᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠ[|| ᅠ||]  ᅠ [|||||||]</pp></div>
-    <div> <pp>ᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠ[|| ᅠ||] ᅠ  [|ᅠ ᅠ|]</pp> </div>
-    <div> <pp>ᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠ[|| ᅠ||] ᅠ  [|ᅠ ᅠ|] </pp> </div>
-    <div> <pp>ᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠ[|| ᅠ||] ᅠ  [|ᅠ ᅠ|] </pp> </div>
-    <div> <pp>ᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠ ᅠ[|] ᅠ ᅠ [|||||||]   </pp> </div>  
-    <div> <pp>ᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠd y a l aᅠᅠᅠᅠ</pp> </div>  
-    <div> <pp>
-        <a href='https://sites.google.com/view/vodyala/%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D0%B0%D1%8F-%D1%81%D1%82%D1%80%D0%B0%D0%BD%D0%B8%D1%86%D0%B0'>ᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠмой google сайт</a> </div>
-    <div><pp>
-        <a href='https://www.youtube.com/channel/UC9aEucxZ1GPGUxK1KBdE7PA'>ᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠмой YouTube канал</a> </pp> </div>
-<div><pp>
-        <a href='https://www.youtube.com/channel/UC7UDnKvCcqn2KV-wT-XN4Rg'>ᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠмой игровой YouTube канал</a> </pp> </div>
+  <div class="wrapper">
+    <div class="main-content">
+      <!-- Верхний баннер -->
+      <div class="main-banner" id="mainBanner" tabindex="0" aria-describedby="mainBannerTooltip" role="button" title="Основной YouTube канал">
+        <img src="https://yt3.googleusercontent.com/JBf0GM2BMe8J3c3UA9DyTzRwgCpJa3dMv6o7i7nP95J_zGuCW2HvyUPd12FTAhJ814HjzNtJ=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj" alt="Vodyala YouTube канал" />
+        <div class="tooltip" id="mainBannerTooltip">Основной YouTube канал</div>
+      </div>
 
-    <div><pp>
-        <a href='https://clck.ru/3BAwUJ'>ᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠМой TikTok</a> </div>
-       <dev> <pp> <a href='https://zen.yandex.ru/id/6223a10a9ab6767e3451fc15'>ᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠмой яндекс дзен</a> </pp> </div>
-    <div><pp>
-        <a href='https://vk.com/id692819808 '>ᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠмой vk</a> </pp> </div>
-    <div><pp>
-        <a href='https://t.me/vodyalayoutube'>ᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠмой телеграм канал</a> </pp> </div>
-    <div><pp>
-        <a href='https://www.roblox.com/users/1650696052/profile'>ᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠмой Roblox</a> </pp>
-    <div><pp>
-        <a href ='https://clck.ru/32jY3f'>ᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠмоё приложение(андроид)</a> </pp>
-    <div><pp>
-    Моя почта: vodyalasubscribers@bk.ru  </div> </pp> </h1>
-      
+      <div class="intro-text">ВЕЛИКИЙ САЙТ ВЕЛИКОГО VODYALA. ДОБРО ПОЖАЛОВАТЬ В МОИ СОЦИАЛЬНЫЕ СЕТИ</div>
 
-    
-    
+      <!-- Ссылки соцсетей 4 на 2 -->
+      <div class="social-grid">
+        <div class="social-item" onclick="window.open('https://youtube.com/@vodyala?si=4lke7xOac3VpEGEo', '_blank')" title="YouTube">YouTube</div>
+        <div class="social-item" onclick="window.open('https://dzen.ru/id/6223a10a9ab6767e3451fc15?utm_referrer=vodyala.github.io', '_blank')" title="Дзен">Дзен</div>
+        <div class="social-item" onclick="window.open('https://m.vk.com/id692819808', '_blank')" title="ВК">ВК</div>
+        <div class="social-item" onclick="window.open('https://t.me/vodyalayoutube', '_blank')" title="Telegram">Telegram</div>
+        <div class="social-item" onclick="window.open('https://www.tiktok.com/vodyala', '_blank')" title="TikTok">TikTok</div>
+        <div class="social-item" onclick="window.open('https://www.SoundCloud.com/Vodyala', '_blank')" title="SoundCloud">SoundCloud</div>
+        <div class="social-item" onclick="window.open('https://www.roblox.com/users/1650696052/profile', '_blank')" title="Roblox">Roblox</div>
+        <div class="social-item" onclick="window.open('https://t.me/vodyalayoutubepaygroup', '_blank')" title="Донаты">Донаты</div>
+      </div>
 
-</body>
-</html>
+      <!-- Нижняя карусель -->
+      <div class="carousel-container">
+        <button class="carousel-button left" aria-label="Previous Banner">&#9664;</button>
+        <div class="carousel-wrapper" id="carouselWrapper">
+          <div class="carousel-item" id="banner1" tabindex="0" aria-describedby="banner1Tooltip" role="button" title="Игровой YouTube канал">
+            <img src="https://yt3.googleusercontent.com/x3U9B5UFJN-KqaVeEHP0aFI_ggEXXhg5cqbiPrSES4iXXsgtBwCAuqHI7skDcYxc-P4Z68_3=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj" alt="Vodyalagamezal" />
+            <div class="tooltip" id="banner1Tooltip">Игровой YouTube канал</div>
+          </div>
+          <div class="carousel-item" id="banner2" tabindex="0" aria-describedby="banner2Tooltip" role="button" title="Soundcloud страница">
+            <img src="https://i1.sndcdn.com/visuals-000867954721-gjXcdf-t1240x260.jpg" alt="SoundCloud Vodyala" />
+            <div class="tooltip" id="banner2Tooltip">Soundcloud страница</div>
+          </div>
+          <div class="carousel-item" id="banner3" tabindex="0" aria-describedby="banner3Tooltip" role="button" title="YouTube канал Гайды для ИТТСУ">
+            <img src="https://yt3.googleusercontent.com/wIIFxIY9FcPwGhq_b1EsYQh0XWODkeqEFhdFArd176CIUdDkSSfx20eZhZUC2PgESMixEjUCfg=w1060-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj" alt="IttsuGuides" />
+            <div class="tooltip" id="banner3Tooltip">YouTube канал Гайды для ИТТСУ</div>
+          </div>
+          <div class="carousel-item" id="banner4" tabindex="0" aria-describedby="banner4Tooltip" role="button" title="Канал о жизни и общении">
+            <img src="https://i1.sndcdn.com/visuals-001664155745-1nQdCh-t1240x260.jpg" alt="NASOSmiit" />
+            <div class="tooltip" id="banner4Tooltip">Канал о жизни и общении</div>
+          </div>
+        </div>
+        <button class="carousel-button right" aria-label="Next Banner">&#9654;</button>
+      </div>
 
-    
-    
+      <footer>ПОЧТА: VODYALASUBSCRIBERS@BK.RU</footer>
+    </div>
 
+    <!-- Боковой баннер-приложение -->
+    <div class="side-banner">
+      <p>Скачайте приложение Vodyala на андроид</p>
+      <div class="side-button" onclick="window.open('https://vodyala.github.io/vodyalaapp.github.io/', '_blank')">ПЕРЕЙТИ</div>
+    </div>
+  </div>
+
+  <!-- Модальные окна -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modalContent">
+      <button class="close-btn" id="closeModal" title="Закрыть">×</button>
+      <h2 id="modalTitle">Заголовок</h2>
+      <p id="modalText">Текст</p>
+      <button class="goto-btn" id="modalGotoBtn">ПЕРЕЙТИ</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlayLarge">
+    <div class="modal modal-large" id="modalContentLarge">
+      <button class="close-btn" id="closeModalLarge" title="Закрыть">XXX</button>
+      <h1>NASOS</h1>
+      <p class="subtitle">Весёлый канал про личную жизнь и треки при помощи ИИ с локальными мемами</p>
+      <div class="btn-row">
+        <button onclick="window.open('https://t.me/NASOSmiit', '_blank')">Канал</button>
+        <button onclick="window.open('https://www.soundcloud.com/nasooos', '_blank')">Треки</button>
+        <button onclick="window.open('https://t.me/addstickers/NASOSsPpcVInstituteTmenasosmiit', '_blank')">Стикеры</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Подсказки (tooltip) показываем при наведении
+  document.querySelectorAll('.main-banner, .carousel-item').forEach(elem => {
+    const tooltip = elem.querySelector('.tooltip');
+    elem.addEventListener('mouseenter', () => {
+      if(tooltip) tooltip.classList.add('show-tooltip');
+    });
+    elem.addEventListener('mouseleave', () => {
+      if(tooltip) tooltip.classList.remove('show-tooltip');
+    });
+  });
+
+  // Верхний баннер
+  const mainBanner = document.getElementById('mainBanner');
+  mainBanner.addEventListener('click', () => {
+    openModal(
+      'Канал, посвящённый техники и технологиям',
+      'Основной YouTube канал',
+      'https://youtube.com/@vodyala?si=4lke7xOac3VpEGEo'
+    );
+  });
+
+  // Карусель
+  const carouselWrapper = document.getElementById('carouselWrapper');
+  const totalItems = carouselWrapper.children.length;
+  let currentIndex = 0;
+
+  function updateCarousel() {
+    carouselWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+  }
+
+  document.querySelector('.carousel-button.left').addEventListener('click', () => {
+    currentIndex = (currentIndex - 1 + totalItems) % totalItems;
+    updateCarousel();
+  });
+
+  document.querySelector('.carousel-button.right').addEventListener('click', () => {
+    currentIndex = (currentIndex + 1) % totalItems;
+    updateCarousel();
+  });
+
+  // Всплывающие окна при клике на баннеры карусели
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalText = document.getElementById('modalText');
+  const modalGotoBtn = document.getElementById('modalGotoBtn');
+
+  // Кнопки закрытия по баннерам
+  const closeModalBtn = document.getElementById('closeModal');
+  const closeBtnTexts = ['X', 'Y', 'Z', 'XXX']; // для баннеров 1-4
+  let currentBannerIndex = 0;
+
+  function openModal(text, title, gotoUrl = null, bannerIndex = 0) {
+    modalTitle.textContent = title;
+    modalText.textContent = text;
+    if(gotoUrl) {
+      modalGotoBtn.style.display = 'block';
+      modalGotoBtn.onclick = () => window.open(gotoUrl, '_blank');
+    } else {
+      modalGotoBtn.style.display = 'none';
+      modalGotoBtn.onclick = null;
+    }
+    closeModalBtn.textContent = closeBtnTexts[bannerIndex] || '×';
+    currentBannerIndex = bannerIndex;
+    modalOverlay.style.display = 'flex';
+  }
+  closeModalBtn.addEventListener('click', () => {
+    modalOverlay.style.display = 'none';
+  });
+  modalOverlay.addEventListener('click', (e) => {
+    if(e.target === modalOverlay) {
+      modalOverlay.style.display = 'none';
+    }
+  });
+
+  // Данные баннеров карусели
+  const bannerData = [
+    {
+      id: 'banner1',
+      tooltip: 'Игровой YouTube канал',
+      title: 'Канал, посвящённый играм и вайбовым стримам',
+      goto: 'https://www.youtube.com/@Vodyalagamezal'
+    },
+    {
+      id: 'banner2',
+      tooltip: 'Soundcloud страница',
+      title: 'Страница с моими треками. ПРЕДУПРЕЖДЕНИЕ: Это не для ушей здорового человека',
+      goto: 'https://www.SoundCloud.com/Vodyala'
+    },
+    {
+      id: 'banner3',
+      tooltip: 'YouTube канал Гайды для ИТТСУ',
+      title: 'Канал, посвящённый помощи для студентов ИТТСУ. Если вы учитесь в РУТ(МИИТ), то, возможно, я смогу Вам помочь. Смотрите наши гайды и СТРИМтенсивы.',
+      goto: 'https://www.youtube.com/@IttsuGuides'
+    },
+    {
+      id: 'banner4',
+      tooltip: 'Канал о жизни и общении',
+      title: 'Здесь вы можете стать настоящим автором контента и делать свои посты, общаясь с друими участниками канала и наслаждаться локальными мемами, треками и стикерами.',
+      goto: null // для последнего баннера отдельное большое окно
+    }
+  ];
+
+  bannerData.forEach(({id, tooltip, title, goto}, index) => {
+    const el = document.getElementById(id);
+    el.setAttribute('title', tooltip);
+    el.addEventListener('click', () => {
+      if(id === 'banner4') {
+        // открываем большое модальное окно для последнего баннера
+        document.getElementById('modalOverlayLarge').style.display = 'flex';
+      } else {
+        openModal(title, tooltip, goto, index);
+      }
+    });
+  });
+
+  // Закрытие большого модального окна
+  const modalOverlayLarge = document.getElementById('modalOverlayLarge');
+  const closeModalLarge = document.getElementById('closeModalLarge');
+  closeModalLarge.addEventListener('click', () => {
+    modalOverlayLarge.style.display = 'none';
+  });
+  modalOverlayLarge.addEventListener('click', (e) => {
+    if(e.target === modalOverlayLarge) {
+      modalOverlayLarge.style.display = 'none';
+    }
+  });
+</script>
 </body>
 </html>
