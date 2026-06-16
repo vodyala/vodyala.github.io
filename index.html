@@ -1,593 +1,814 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Vodyala</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Экосистема Насоуса</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=JetBrains+Mono:wght@700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --yellow: #fdd835;
+            --hazel: #5f634f;
+            --hazel-dark: #494d3d;
+            --white: #ffffff;
+            --bg-clean: #fdfdfa;
+            --nasos-orange: #ff6600;
+        }
 
-  body {
-    margin: 0;
-    padding: 30px;
-    font-family: 'Roboto Mono', monospace;
-    background: #fefefe;
-    color: #111;
-    display: flex;
-    justify-content: center;
-    min-height: 100vh;
-  }
-  .wrapper {
-    display: flex;
-    max-width: 1200px;
-    width: 100%;
-    gap: 30px;
-  }
-  .main-content {
-    flex: 1 1 800px;
-    display: flex;
-    flex-direction: column;
-  }
-  /* Верхний баннер */
-  .main-banner {
-    position: relative;
-    height: 160px;
-    border: 5px solid #000;
-    border-radius: 0;
-    margin-bottom: 25px;
-    overflow: hidden;
-    cursor: pointer;
-  }
-  .main-banner img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-  .main-banner:hover img {
-    transform: scale(1.05);
-  }
-  /* Подсказка (tooltip) */
-  .tooltip {
-    position: absolute;
-    bottom: 5px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(208, 0, 0, 0.9);
-    color: white;
-    font-weight: 900;
-    padding: 6px 14px;
-    border-radius: 2px;
-    font-size: 1rem;
-    user-select: none;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-    white-space: nowrap;
-    z-index: 5;
-  }
-  .show-tooltip {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  /* Интро текст */
-  .intro-text {
-    font-size: 1.6rem;
-    color: #d00;
-    font-weight: 900;
-    margin-bottom: 30px;
-    user-select: none;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-  /* Сетка соцсетей 4 на 2 */
-  .social-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 25px;
-    margin-bottom: 30px;
-  }
-  .social-item {
-    background: #fff;
-    border: 5px solid #d00;
-    border-radius: 0;
-    height: 160px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 900;
-    font-size: 1.4rem;
-    color: #d00;
-    cursor: pointer;
-    user-select: none;
-    transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
-    text-transform: uppercase;
-    text-align: center;
-    padding: 10px;
-  }
-  .social-item:hover {
-    background: #d00;
-    color: #fff;
-    transform: scale(1.05);
-    box-shadow: 0 0 15px #d00;
-  }
-  /* Нижняя карусель */
-  .carousel-container {
-    position: relative;
-    margin-bottom: 30px;
-    border: 5px solid #d00;
-    border-radius: 0;
-    overflow: hidden;
-    height: 140px;
-    background: #fff;
-  }
-  .carousel-wrapper {
-    display: flex;
-    transition: transform 0.4s ease;
-    height: 100%;
-  }
-  .carousel-item {
-    min-width: 100%;
-    height: 140px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-  }
-  .carousel-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    /* Убрали opacity, теперь всегда 1 */
-    opacity: 1;
-    transition: none;
-  }
-  .carousel-item:hover img {
-    opacity: 1;
-    transform: none;
-  }
-  /* Кнопки карусели - бирюзовые */
-  .carousel-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: #222;
-    border: none;
-    color: #0ff;
-    font-weight: 900;
-    font-size: 2rem;
-    cursor: pointer;
-    width: 45px;
-    height: 100%;
-    user-select: none;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    outline: none;
-    z-index: 2;
-  }
-  .carousel-button:hover {
-    background: #0ff;
-    color: #222;
-  }
-  .carousel-button.left {
-    left: 0;
-    border-right: 5px solid #d00;
-  }
-  .carousel-button.right {
-    right: 0;
-    border-left: 5px solid #d00;
-  }
-  footer {
-    font-size: 1.4rem;
-    font-weight: 900;
-    color: #d00;
-    text-align: center;
-    user-select: none;
-  }
-  /* Боковой баннер-приложение */
-  .side-banner {
-    width: 280px;
-    border: 5px solid #444;
-    border-radius: 0;
-    background: #eee;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 30px 20px;
-    user-select: none;
-  }
-  .side-banner p {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #444;
-    margin: 0;
-    line-height: 1.4;
-  }
-  .side-button {
-    margin-top: 20px;
-    background: #444;
-    color: #fff;
-    border: 5px solid #444;
-    padding: 15px 0;
-    font-weight: 900;
-    font-size: 1.4rem;
-    text-align: center;
-    cursor: pointer;
-    user-select: none;
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-    text-transform: uppercase;
-  }
-  .side-button:hover {
-    background: #666;
-    color: #fff;
-    border-color: #666;
-  }
-  /* Всплывающее окно - обычные с красным */
-  .modal-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.6);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
-  }
-  .modal {
-    background: black;
-    border: 3px solid #d00;
-    padding: 25px 30px;
-    width: 320px;
-    max-width: 90vw;
-    text-align: center;
-    color: #d00;
-    font-weight: 900;
-    user-select: none;
-    position: relative;
-  }
-  .modal h2 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 1.8rem;
-    text-transform: uppercase;
-    word-wrap: break-word;
-  }
-  .modal p {
-    word-wrap: break-word;
-  }
-  .modal button {
-    background: none;
-    border: 3px solid #d00;
-    color: #d00;
-    font-weight: 900;
-    font-size: 1.2rem;
-    margin: 10px 10px 0 10px;
-    padding: 10px 15px;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    border-radius: 0;
-  }
-  .modal button:hover {
-    background: #d00;
-    color: black;
-  }
-  .modal .close-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    border-color: #444;
-    color: #444;
-    font-size: 1.8rem;
-    padding: 5px 10px;
-    line-height: 1;
-    cursor: pointer;
-  }
-  .modal .close-btn:hover {
-    background: #444;
-    color: white;
-  }
-  /* Кнопка перейти в обычных модалках */
-  .modal .goto-btn {
-    display: block;
-    margin: 20px auto 0 auto;
-    width: 140px;
-    border-radius: 0;
-  }
-  /* Модалка для последнего баннера NASOS - оранжевая */
-  .modal-large {
-    width: 600px;
-    max-width: 95vw;
-    background: #111;
-    border-color: #ff6c00;
-    color: #ff6c00;
-    padding: 40px 30px 20px 30px;
-    word-break: break-word;
-    overflow-wrap: break-word;
-  }
-  .modal-large h1 {
-    font-size: 3.5rem;
-    margin: 0 0 10px 0;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .modal-large p.subtitle {
-    margin: 0 0 30px 0;
-    font-weight: 700;
-    font-size: 1.3rem;
-    letter-spacing: 0.05em;
-    color: #ff6c00;
-    user-select: none;
-  }
-  .modal-large .btn-row {
-    display: flex;
-    gap: 15px;
-  }
-  .modal-large .btn-row button {
-    flex: 1;
-    white-space: nowrap;
-    padding: 12px 10px;
-    font-size: 1.25rem;
-    font-weight: 900;
-    border-radius: 0;
-    border: 3px solid #ff6c00;
-    background: none;
-    color: #ff6c00;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  .modal-large .btn-row button:first-child {
-    flex: 2;
-  }
-  .modal-large .btn-row button:hover {
-    background: #ff6c00;
-    color: black;
-  }
-  .modal-large .close-btn {
-    top: 10px;
-    right: 10px;
-    font-size: 2.4rem;
-    font-weight: 900;
-    color: #ff6c00;
-    line-height: 1;
-    padding: 0 10px;
-    cursor: pointer;
-    border: none;
-    background: none;
-    user-select: none;
-    position: absolute;
-  }
-  .modal-large .close-btn:hover {
-    color: #ff3d00;
-  }
-  /* Адаптив */
-  @media (max-width: 1150px) {
-    .wrapper {
-      flex-direction: column;
-      align-items: center;
-    }
-    .side-banner {
-      width: 100%;
-      max-width: 400px;
-      margin-top: 30px;
-    }
-    .modal-large {
-      width: 90%;
-      padding: 25px 15px 20px;
-    }
-    .modal-large h1 {
-      font-size: 2.5rem;
-    }
-  }
-</style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-clean);
+            color: var(--hazel);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* === Десктопный бренд === */
+        .top-left-brand {
+            position: absolute;
+            top: 25px;
+            left: 40px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 100;
+            cursor: pointer;
+            background: rgba(253, 253, 250, 0.8);
+            padding: 5px 10px;
+            border-radius: 8px;
+            user-select: none;
+            transition: transform 0.2s ease;
+        }
+
+        .top-left-brand:hover {
+            transform: scale(1.02);
+        }
+
+        .brand-shape {
+            width: 55px;
+            height: 50px;
+            background: var(--yellow);
+            clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-shape .avatar-mini {
+            width: 110%;
+            height: 110%;
+            background-image: url('5298742681573989917.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 14px;
+            line-height: 1.1;
+            color: var(--hazel);
+            letter-spacing: -0.02em;
+        }
+
+        /* Мобильный бренд */
+        .mobile-top-brand {
+            display: none;
+        }
+
+        /* Контейнер */
+        .hub-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            width: 100%;
+            max-width: 1400px;
+            flex-grow: 1;
+        }
+
+        /* Мобильная сетка элементов */
+        .mobile-pebbles-grid {
+            display: none;
+        }
+
+        /* === Орбитальное кольцо === */
+        .orbit-wrapper {
+            position: relative;
+            width: 640px;
+            height: 640px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .rotator-zonal {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            animation: intro-spin 4s cubic-bezier(0.05, 0.7, 0.1, 1) 1, continuous-slow 60s linear 4s infinite;
+            transform-origin: center center;
+        }
+
+        .rotator-zonal:hover {
+            animation-play-state: paused;
+        }
+
+        .central-logo {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            background: var(--yellow);
+            clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
+            cursor: pointer;
+            z-index: 25;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 25px 60px rgba(95, 99, 79, 0.2);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .central-logo:hover {
+            transform: scale(1.08) rotate(-4deg);
+        }
+
+        .central-logo .avatar-mock {
+            width: 115%;
+            height: 115%;
+            background-image: url('5298742681573989917.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .service-node {
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 11px;
+            letter-spacing: 0.02em;
+            text-align: center;
+            padding: 12px;
+            box-shadow: 0 15px 35px rgba(95, 99, 79, 0.12);
+            z-index: 15;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            animation: intro-spin-reverse 4s cubic-bezier(0.05, 0.7, 0.1, 1) 1, continuous-slow-reverse 60s linear 4s infinite;
+            transform-origin: center center;
+        }
+
+        .rotator-zonal:hover .service-node {
+            animation-play-state: paused;
+        }
+
+        .service-node:hover {
+            transform: scale(1.15) !important;
+            box-shadow: 0 20px 45px rgba(95, 99, 79, 0.25);
+            z-index: 40;
+        }
+
+        .service-node span {
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        .hazel-node { background: var(--hazel); color: var(--yellow); }
+        .hazel-node span { color: var(--white); }
+        .yellow-node { background: var(--yellow); color: var(--hazel-dark); }
+        .yellow-node span { color: var(--hazel); }
+
+        .shape-squircle { border-radius: 46px; }
+        .shape-flower { border-radius: 40% 60% 40% 60% / 60% 45% 55% 40%; }
+        .shape-organic { border-radius: 60% 40% 60% 40% / 40% 60% 40% 60%; }
+        .shape-rounded-star { border-radius: 35% 35% 35% 35% / 50% 50% 50% 50%; }
+
+        .node-1 { top: calc(50% - 310px); left: calc(50% - 65px); } 
+        .node-2 { top: calc(50% - 238px); left: calc(50% + 108px); }
+        .node-3 { top: calc(50% - 65px);  left: calc(50% + 180px); }
+        .node-4 { top: calc(50% + 108px); left: calc(50% + 108px); }
+        .node-5 { top: calc(50% + 180px); left: calc(50% - 65px); } 
+        .node-6 { top: calc(50% + 108px); left: calc(50% - 238px); }
+        .node-7 { top: calc(50% - 65px);  left: calc(50% - 310px); }
+        .node-8 { top: calc(50% - 238px); left: calc(50% - 238px); }
+
+        /* === Карусель === */
+        .content-section {
+            width: 100%;
+            max-width: 1160px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .parallelogram-container {
+            position: relative;
+            background: var(--yellow);
+            transform: skewX(-14deg);
+            border-radius: 12px;
+            padding: 35px 65px;
+            box-shadow: 0 30px 65px rgba(95, 99, 79, 0.15);
+            max-width: 100%;
+        }
+
+        .carousel-viewport {
+            overflow: hidden;
+            width: 100%;
+            transform: skewX(14deg);
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 25px;
+            padding-top: 85px;
+            margin-top: -85px;
+            transition: transform 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+        }
+
+        .card {
+            flex: 0 0 calc(50% - 13px);
+            background: var(--white);
+            height: 320px;
+            border-radius: 14px;
+            box-shadow: 0 15px 35px rgba(95, 99, 79, 0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-20px);
+            box-shadow: 0 25px 50px rgba(95, 99, 79, 0.2);
+        }
+
+        .card-img {
+            height: 68%;
+            background: var(--hazel-dark);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .nasos-cyber-cover {
+            width: 100%;
+            height: 100%;
+            background: #262626;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .nasos-cyber-text {
+            font-family: 'Orbitron', 'JetBrains Mono', monospace;
+            font-size: 26px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #ffe066 0%, #f5b041 50%, #b37d14 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 8px rgba(245, 176, 65, 0.4));
+            user-select: none;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .nasos-cyber-text {
+            transform: scale(1.05);
+        }
+
+        .card-info {
+            padding: 15px 20px;
+            height: 32%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .card-info h3 {
+            margin: 0 0 4px 0;
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--hazel-dark);
+            text-transform: uppercase;
+        }
+
+        .card-info p {
+            margin: 0;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #666;
+            font-weight: 700;
+        }
+
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            width: 55px;
+            height: 55px;
+            background: var(--hazel);
+            color: var(--yellow);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 40;
+            font-size: 22px;
+            box-shadow: 0 10px 20px rgba(95, 99, 79, 0.15);
+            transform: translateY(-50%) skewX(14deg);
+            transition: all 0.15s ease;
+        }
+
+        .nav-arrow:hover {
+            background: var(--white);
+            color: var(--hazel);
+            transform: translateY(-50%) skewX(14deg) scale(1.1);
+        }
+
+        .arrow-left { left: 8px; }
+        .arrow-right { right: 8px; }
+
+        /* === Диалоговое окно === */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .nasos-modal-box {
+            background: #1a1a1a;
+            border: 3px solid var(--nasos-orange);
+            border-radius: 16px;
+            width: 580px;
+            max-width: 90%;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            transform: scale(0.9);
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-family: 'JetBrains Mono', monospace;
+            text-align: center;
+        }
+
+        .modal-overlay.active .nasos-modal-box {
+            transform: scale(1);
+        }
+
+        .modal-close-x {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: var(--nasos-orange);
+            font-size: 24px;
+            font-weight: 900;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.1s ease;
+        }
+
+        .modal-close-x:hover {
+            transform: scale(1.1);
+        }
+
+        .modal-title {
+            color: var(--nasos-orange);
+            font-size: 42px;
+            font-weight: 900;
+            margin: 10px 0 15px 0;
+            letter-spacing: 4px;
+        }
+
+        .modal-desc {
+            color: var(--nasos-orange);
+            font-size: 14px;
+            line-height: 1.6;
+            font-weight: 700;
+            margin: 0 auto 30px auto;
+            max-width: 85%;
+        }
+
+        .modal-actions-grid {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .modal-btn {
+            background: transparent;
+            border: 2px solid var(--nasos-orange);
+            color: var(--nasos-orange);
+            padding: 12px 30px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+        }
+
+        .modal-btn:hover {
+            background: var(--nasos-orange);
+            color: #1a1a1a;
+            transform: translateY(-2px);
+        }
+
+        footer {
+            background: transparent;
+            padding: 40px 20px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: auto;
+        }
+
+        .footer-logo-link {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--hazel-dark);
+            font-weight: 900;
+            font-size: 24px;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .footer-logo-shape {
+            background: var(--yellow);
+            padding: 6px 20px;
+            clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
+            color: var(--hazel-dark);
+        }
+
+        .email-link {
+            color: var(--hazel);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 15px;
+            border-bottom: 2px dashed var(--yellow);
+        }
+
+        .app-button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--hazel);
+            color: var(--white);
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            box-shadow: 0 8px 20px rgba(95, 99, 79, 0.15);
+        }
+
+        .app-button:hover {
+            background: var(--yellow);
+            color: var(--hazel);
+            transform: translateY(-2px);
+        }
+
+        .app-button svg { width: 16px; height: 16px; fill: currentColor; }
+        .copyright { font-size: 10px; font-weight: 700; opacity: 0.4; }
+
+        @keyframes intro-spin {
+            0% { transform: rotate(0deg); }
+            30% { transform: rotate(1080deg); }
+            100% { transform: rotate(1440deg); }
+        }
+        @keyframes continuous-slow {
+            0% { transform: rotate(1440deg); }
+            100% { transform: rotate(1800deg); }
+        }
+
+        @keyframes intro-spin-reverse {
+            0% { transform: rotate(0deg); }
+            30% { transform: rotate(-1080deg); }
+            100% { transform: rotate(-1440deg); }
+        }
+        @keyframes continuous-slow-reverse {
+            0% { transform: rotate(-1440deg); }
+            100% { transform: rotate(-1800deg); }
+        }
+
+        @media (max-width: 768px) {
+            .top-left-brand { 
+                display: none; 
+            }
+
+            .mobile-top-brand {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                width: 100%;
+                padding: 20px 10px 5px 10px;
+                background: transparent;
+                user-select: none;
+            }
+
+            .orbit-wrapper { 
+                display: none; 
+            }
+
+            .mobile-pebbles-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                width: 100%;
+                max-width: 480px;
+                margin: 25px 0 35px 0;
+                padding: 0 10px;
+            }
+
+            .pebble-node {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                font-weight: 900;
+                font-size: 12px;
+                text-align: center;
+                padding: 20px 10px;
+                min-height: 95px;
+                box-shadow: 0 8px 20px rgba(95, 99, 79, 0.1);
+                transition: transform 0.15s ease;
+            }
+
+            .pebble-node:active {
+                transform: scale(0.96);
+            }
+
+            .pebble-node span {
+                font-size: 9px;
+                font-weight: 700;
+                text-transform: uppercase;
+                opacity: 0.8;
+                margin-top: 5px;
+            }
+
+            .pebble-1 { border-radius: 45% 35% 40% 50% / 50% 40% 55% 45%; }
+            .pebble-2 { border-radius: 35% 50% 45% 40% / 45% 55% 40% 50%; }
+            .pebble-3 { border-radius: 50% 40% 35% 45% / 40% 45% 50% 55%; }
+            .pebble-4 { border-radius: 40% 45% 50% 35% / 55% 40% 45% 50%; }
+            .pebble-5 { border-radius: 45% 50% 40% 40% / 50% 45% 55% 40%; }
+            .pebble-6 { border-radius: 35% 40% 50% 45% / 40% 55% 45% 50%; }
+            .pebble-7 { border-radius: 50% 35% 45% 40% / 55% 40% 50% 45%; }
+            .pebble-8 { border-radius: 40% 50% 35% 50% / 45% 50% 40% 55%; }
+
+            .parallelogram-container { 
+                transform: skewX(0deg); 
+                padding: 25px 15px; 
+                margin: 0; 
+                border-radius: 16px;
+            }
+            .carousel-viewport { 
+                transform: skewX(0deg); 
+            }
+            .card { 
+                flex: 0 0 100%; 
+                height: 300px; 
+                border-radius: 12px;
+            }
+            .nav-arrow { 
+                transform: translateY(-50%) skewX(0deg); 
+                width: 45px; 
+                height: 45px; 
+            }
+            .arrow-left { left: -5px; }
+            .arrow-right { right: -5px; }
+            .nasos-cyber-text { font-size: 20px; }
+        }
+    </style>
 </head>
 <body>
-  <div class="wrapper">
-    <div class="main-content">
-      <!-- Верхний баннер -->
-      <div class="main-banner" id="mainBanner" tabindex="0" aria-describedby="mainBannerTooltip" role="button" title="Основной YouTube канал">
-        <img src="https://yt3.googleusercontent.com/JBf0GM2BMe8J3c3UA9DyTzRwgCpJa3dMv6o7i7nP95J_zGuCW2HvyUPd12FTAhJ814HjzNtJ=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj" alt="Vodyala YouTube канал" />
-        <div class="tooltip" id="mainBannerTooltip">Основной YouTube канал</div>
-      </div>
 
-      <div class="intro-text">ВЕЛИКИЙ САЙТ ВЕЛИКОГО VODYALA. ДОБРО ПОЖАЛОВАТЬ В МОИ СОЦИАЛЬНЫЕ СЕТИ</div>
-
-      <!-- Ссылки соцсетей 4 на 2 -->
-      <div class="social-grid">
-        <div class="social-item" onclick="window.open('https://youtube.com/@vodyala?si=4lke7xOac3VpEGEo', '_blank')" title="YouTube">YouTube</div>
-        <div class="social-item" onclick="window.open('https://dzen.ru/id/6223a10a9ab6767e3451fc15?utm_referrer=vodyala.github.io', '_blank')" title="Дзен">Дзен</div>
-        <div class="social-item" onclick="window.open('https://m.vk.com/id692819808', '_blank')" title="ВК">ВК</div>
-        <div class="social-item" onclick="window.open('https://t.me/vodyalayoutube', '_blank')" title="Telegram">Telegram</div>
-        <div class="social-item" onclick="window.open('https://www.tiktok.com/vodyala', '_blank')" title="TikTok">TikTok</div>
-        <div class="social-item" onclick="window.open('https://www.SoundCloud.com/Vodyala', '_blank')" title="SoundCloud">SoundCloud</div>
-        <div class="social-item" onclick="window.open('https://www.roblox.com/users/1650696052/profile', '_blank')" title="Roblox">Roblox</div>
-        <div class="social-item" onclick="window.open('https://t.me/vodyalayoutubepaygroup', '_blank')" title="Донаты">Донаты</div>
-      </div>
-
-      <!-- Нижняя карусель -->
-      <div class="carousel-container">
-        <button class="carousel-button left" aria-label="Previous Banner">&#9664;</button>
-        <div class="carousel-wrapper" id="carouselWrapper">
-          <div class="carousel-item" id="banner1" tabindex="0" aria-describedby="banner1Tooltip" role="button" title="Игровой YouTube канал">
-            <img src="https://yt3.googleusercontent.com/x3U9B5UFJN-KqaVeEHP0aFI_ggEXXhg5cqbiPrSES4iXXsgtBwCAuqHI7skDcYxc-P4Z68_3=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj" alt="Vodyalagamezal" />
-            <div class="tooltip" id="banner1Tooltip">Игровой YouTube канал</div>
-          </div>
-          <div class="carousel-item" id="banner2" tabindex="0" aria-describedby="banner2Tooltip" role="button" title="Soundcloud страница">
-            <img src="https://i1.sndcdn.com/visuals-000867954721-gjXcdf-t1240x260.jpg" alt="SoundCloud Vodyala" />
-            <div class="tooltip" id="banner2Tooltip">Soundcloud страница</div>
-          </div>
-          <div class="carousel-item" id="banner3" tabindex="0" aria-describedby="banner3Tooltip" role="button" title="YouTube канал Гайды для ИТТСУ">
-            <img src="https://yt3.googleusercontent.com/wIIFxIY9FcPwGhq_b1EsYQh0XWODkeqEFhdFArd176CIUdDkSSfx20eZhZUC2PgESMixEjUCfg=w1060-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj" alt="IttsuGuides" />
-            <div class="tooltip" id="banner3Tooltip">YouTube канал Гайды для ИТТСУ</div>
-          </div>
-          <div class="carousel-item" id="banner4" tabindex="0" aria-describedby="banner4Tooltip" role="button" title="Канал о жизни и общении">
-            <img src="https://i1.sndcdn.com/visuals-001664155745-1nQdCh-t1240x260.jpg" alt="NASOSmiit" />
-            <div class="tooltip" id="banner4Tooltip">Канал о жизни и общении</div>
-          </div>
+    <div class="top-left-brand" onclick="window.location.reload()">
+        <div class="brand-shape">
+            <div class="avatar-mini"></div>
         </div>
-        <button class="carousel-button right" aria-label="Next Banner">&#9654;</button>
-      </div>
-
-      <footer>ПОЧТА: VODYALASUBSCRIBERS@BK.RU</footer>
+        <div class="brand-text">
+            <span>Экосистема</span>
+            <span>Насоуса</span>
+        </div>
     </div>
 
-    <!-- Боковой баннер-приложение -->
-    <div class="side-banner">
-      <p>Скачайте приложение Vodyala на андроид</p>
-      <div class="side-button" onclick="window.open('https://vodyala.github.io/vodyalaapp.github.io/', '_blank')">ПЕРЕЙТИ</div>
+    <div class="mobile-top-brand">
+        <div class="brand-shape">
+            <div class="avatar-mini"></div>
+        </div>
+        <div class="brand-text">
+            <span>Экосистема</span>
+            <span>Насоуса</span>
+        </div>
     </div>
-  </div>
 
-  <!-- Модальные окна -->
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal" id="modalContent">
-      <button class="close-btn" id="closeModal" title="Закрыть">×</button>
-      <h2 id="modalTitle">Заголовок</h2>
-      <p id="modalText">Текст</p>
-      <button class="goto-btn" id="modalGotoBtn">ПЕРЕЙТИ</button>
+    <div class="hub-container">
+        
+        <div class="orbit-wrapper">
+            <div class="central-logo" onclick="window.open('https://t.me/NASOSlinks', '_blank')">
+                <div class="avatar-mock" title="Экосистема Насоуса"></div>
+            </div>
+            
+            <div class="rotator-zonal">
+                <a href="https://youtube.com/@vodyala" target="_blank" class="service-node hazel-node shape-squircle node-1">YOUTUBE<span>Main</span></a>
+                <a href="https://t.me/vodyalayoutube" target="_blank" class="service-node yellow-node shape-flower node-2">TELEGRAM<span>Channel</span></a>
+                <a href="https://dzen.ru/id/6223a10a9ab6767e3451fc15" target="_blank" class="service-node hazel-node shape-organic node-3">ДЗЕН<span>Блог</span></a>
+                <a href="https://m.vk.com/id692819808" target="_blank" class="service-node yellow-node shape-rounded-star node-4">ВК<span>Профиль</span></a>
+                <a href="https://www.tiktok.com/@vodyala" target="_blank" class="service-node hazel-node shape-squircle node-5">TIKTOK<span>Shorts</span></a>
+                <a href="https://www.soundcloud.com/vodyala" target="_blank" class="service-node yellow-node shape-flower node-6">SOUNDCLOUD<span>Tracks</span></a>
+                <a href="https://www.roblox.com/users/1650696052/profile" target="_blank" class="service-node hazel-node shape-organic node-7">ROBLOX<span>Profile</span></a>
+                <a href="https://t.me/vodyalayoutubepaygroup" target="_blank" class="service-node yellow-node shape-rounded-star node-8">BOOSTY<span>Support</span></a>
+            </div>
+        </div>
+
+        <div class="mobile-pebbles-grid">
+            <a href="https://youtube.com/@vodyala" target="_blank" class="pebble-node hazel-node pebble-1">YOUTUBE<span>Main</span></a>
+            <a href="https://t.me/vodyalayoutube" target="_blank" class="pebble-node yellow-node pebble-2">TELEGRAM<span>Channel</span></a>
+            <a href="https://dzen.ru/id/6223a10a9ab6767e3451fc15" target="_blank" class="pebble-node hazel-node pebble-3">ДЗЕН<span>Блог</span></a>
+            <a href="https://m.vk.com/id692819808" target="_blank" class="pebble-node yellow-node pebble-4">ВК<span>Профиль</span></a>
+            <a href="https://www.tiktok.com/@vodyala" target="_blank" class="pebble-node hazel-node pebble-5">TIKTOK<span>Shorts</span></a>
+            <a href="https://www.soundcloud.com/vodyala" target="_blank" class="pebble-node yellow-node pebble-6">SOUNDCLOUD<span>Tracks</span></a>
+            <a href="https://www.roblox.com/users/1650696052/profile" target="_blank" class="pebble-node hazel-node pebble-7">ROBLOX<span>Profile</span></a>
+            <a href="https://t.me/vodyalayoutubepaygroup" target="_blank" class="pebble-node yellow-node pebble-8">BOOSTY<span>Support</span></a>
+        </div>
+
+        <div class="content-section">
+            <div class="parallelogram-container">
+                <div class="nav-arrow arrow-left" id="prevBtn">‹</div>
+                <div class="carousel-viewport">
+                    <div class="carousel-track" id="track">
+                        
+                        <div class="card" onclick="window.open('https://youtube.com/@vodyala', '_blank')">
+                            <div class="card-img">
+                                <img src="https://yt3.googleusercontent.com/JBf0GM2BMe8J3c3UA9DyTzRwgCpJa3dMv6o7i7nP95J_zGuCW2HvyUPd12FTAhJ814HjzNtJ=w1707" alt="Vodyala">
+                            </div>
+                            <div class="card-info">
+                                <h3>Vodyala</h3>
+                                <p>Обзоры девайсов и технологий, с которых начался весь движ</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card" onclick="window.open('https://www.youtube.com/@Vodyalagamezal', '_blank')">
+                            <div class="card-img">
+                                <img src="https://yt3.googleusercontent.com/x3U9B5UFJN-KqaVeEHP0aFI_ggEXXhg5cqbiPrSES4iXXsgtBwCAuqHI7skDcYxc-P4Z68_3=w1707" alt="Игровой Зал">
+                            </div>
+                            <div class="card-info">
+                                <h3>Игровой Зал</h3>
+                                <p>Стримы, угарные прохождения, Танки, Minecraft и прочее</p>
+                            </div>
+                        </div>
+
+                        <div class="card" onclick="window.open('https://www.youtube.com/@IttsuGuides', '_blank')">
+                            <div class="card-img">
+                                <img src="https://yt3.googleusercontent.com/wIIFxIY9FcPwGhq_b1EsYQh0XWODkeqEFhdFArd176CIUdDkSSfx20eZhZUC2PgESMixEjUCfg=w1060" alt="ИТТСУ Гайды">
+                            </div>
+                            <div class="card-info">
+                                <h3>Гайды для ИТТСУ</h3>
+                                <p>Спасение студентов РУТ (МИИТ). Стримтенсивы, базы данных, SQL и зачеты</p>
+                            </div>
+                        </div>
+
+                        <div class="card" onclick="openNasosModal()">
+                            <div class="card-img">
+                                <div class="nasos-cyber-cover">
+                                    <div class="nasos-cyber-text">NASOOOOOOOOS</div>
+                                </div>
+                            </div>
+                            <div class="card-info">
+                                <h3>СВИДЕТЕЛИ НАСОУСА</h3>
+                                <p>Общество свидетелей Насоуса. Канал для общения</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="nav-arrow arrow-right" id="nextBtn">›</div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div class="modal-overlay" id="modalOverlayLarge">
-    <div class="modal modal-large" id="modalContentLarge">
-      <button class="close-btn" id="closeModalLarge" title="Закрыть">XXX</button>
-      <h1>NASOS</h1>
-      <p class="subtitle">Весёлый канал про личную жизнь и треки при помощи ИИ с локальными мемами</p>
-      <div class="btn-row">
-        <button onclick="window.open('https://t.me/NASOSmiit', '_blank')">Канал</button>
-        <button onclick="window.open('https://www.soundcloud.com/nasooos', '_blank')">Треки</button>
-        <button onclick="window.open('https://t.me/addstickers/NASOSsPpcVInstituteTmenasosmiit', '_blank')">Стикеры</button>
-      </div>
+    <div class="modal-overlay" id="nasosModal" onclick="closeNasosModal(event)">
+        <div class="nasos-modal-box" onclick="event.stopPropagation()">
+            <div class="modal-close-x" onclick="closeNasosModal(null)">✕✕✕</div>
+            <div class="modal-title">NASOS</div>
+            <div class="modal-desc">Это общество свидетелей Насоуса с фирменными мемами, треками, стикерами и контентом. Насоооооооооуууус🤘
+</div>
+            <div class="modal-actions-grid">
+                <button class="modal-btn" onclick="window.open('https://t.me/NASOSmiit', '_blank')">Войти</button>
+                <button class="modal-btn" onclick="window.open('https://www.soundcloud.com/vodyala', '_blank')">Треки</button>
+                <button class="modal-btn" onclick="window.open('https://t.me/addstickers/NasosStickers', '_blank')">Стикеры</button>
+            </div>
+        </div>
     </div>
-  </div>
 
-<script>
-  // Подсказки (tooltip) показываем при наведении
-  document.querySelectorAll('.main-banner, .carousel-item').forEach(elem => {
-    const tooltip = elem.querySelector('.tooltip');
-    elem.addEventListener('mouseenter', () => {
-      if(tooltip) tooltip.classList.add('show-tooltip');
-    });
-    elem.addEventListener('mouseleave', () => {
-      if(tooltip) tooltip.classList.remove('show-tooltip');
-    });
-  });
+    <footer>
+        <div class="footer-logo-link" onclick="window.location.reload()">
+            <div class="footer-logo-shape">N</div>
+            <span>Экосистема Насоуса</span>
+        </div>
+        <a href="mailto:nasoooooooos@mail.ru" class="email-link">nasoooooooos@mail.ru</a>
+        <a href="https://vodyala.github.io/vodyalaapp.github.io/" target="_blank" class="app-button">
+            <svg viewBox="0 0 24 24">
+                <path d="M17.523 15.3l1.816 3.146a.5.5 0 0 1-.175.683l-.11.063a.5.5 0 0 1-.683-.175L16.54 15.85a11.1 11.1 0 0 1-4.54 1.01 11.1 11.1 0 0 1-4.54-1.01l-1.83 3.167a.5.5 0 0 1-.684.175l-.11-.063a.5.5 0 0 1-.175-.683l1.816-3.146A10.155 10.155 0 0 1 2.1 7.23a.5.5 0 0 1 .466-.41h18.868a.5.5 0 0 1 .466.41 10.145 10.145 0 0 1-4.377 8.07zM7 10.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5zm10 0a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5z"/>
+            </svg>
+            App Android
+        </a>
+        <div class="copyright">© 2026 Holding Nasos Systems</div>
+    </footer>
 
-  // Верхний баннер
-  const mainBanner = document.getElementById('mainBanner');
-  mainBanner.addEventListener('click', () => {
-    openModal(
-      'Канал, посвящённый техники и технологиям',
-      'Основной YouTube канал',
-      'https://youtube.com/@vodyala?si=4lke7xOac3VpEGEo'
-    );
-  });
+    <script>
+        const track = document.getElementById('track');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const cards = document.querySelectorAll('.card');
+        const nasosModal = document.getElementById('nasosModal');
+        let index = 0;
 
-  // Карусель
-  const carouselWrapper = document.getElementById('carouselWrapper');
-  const totalItems = carouselWrapper.children.length;
-  let currentIndex = 0;
+        function getCardsPerView() { return window.innerWidth <= 768 ? 1 : 2; }
 
-  function updateCarousel() {
-    carouselWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
-  }
+        function updateCarousel() {
+            const cardWidth = cards[0].getBoundingClientRect().width;
+            const gap = 25; 
+            const amountToMove = (cardWidth + gap) * index;
+            track.style.transform = `translateX(-${amountToMove}px)`;
+        }
 
-  document.querySelector('.carousel-button.left').addEventListener('click', () => {
-    currentIndex = (currentIndex - 1 + totalItems) % totalItems;
-    updateCarousel();
-  });
+        nextBtn.addEventListener('click', () => {
+            const maxIndex = cards.length - getCardsPerView();
+            index = (index < maxIndex) ? index + 1 : 0;
+            updateCarousel();
+        });
 
-  document.querySelector('.carousel-button.right').addEventListener('click', () => {
-    currentIndex = (currentIndex + 1) % totalItems;
-    updateCarousel();
-  });
+        prevBtn.addEventListener('click', () => {
+            index = (index > 0) ? index - 1 : cards.length - getCardsPerView();
+            updateCarousel();
+        });
 
-  // Всплывающие окна при клике на баннеры карусели
-  const modalOverlay = document.getElementById('modalOverlay');
-  const modalTitle = document.getElementById('modalTitle');
-  const modalText = document.getElementById('modalText');
-  const modalGotoBtn = document.getElementById('modalGotoBtn');
+        function openNasosModal() {
+            nasosModal.classList.add('active');
+        }
 
-  // Кнопки закрытия по баннерам
-  const closeModalBtn = document.getElementById('closeModal');
-  const closeBtnTexts = ['X', 'Y', 'Z', 'XXX']; // для баннеров 1-4
-  let currentBannerIndex = 0;
+        function closeNasosModal(e) {
+            if(!e || e.target === nasosModal || e.target.classList.contains('modal-close-x')) {
+                nasosModal.classList.remove('active');
+            }
+        }
 
-  function openModal(text, title, gotoUrl = null, bannerIndex = 0) {
-    modalTitle.textContent = title;
-    modalText.textContent = text;
-    if(gotoUrl) {
-      modalGotoBtn.style.display = 'block';
-      modalGotoBtn.onclick = () => window.open(gotoUrl, '_blank');
-    } else {
-      modalGotoBtn.style.display = 'none';
-      modalGotoBtn.onclick = null;
-    }
-    closeModalBtn.textContent = closeBtnTexts[bannerIndex] || '×';
-    currentBannerIndex = bannerIndex;
-    modalOverlay.style.display = 'flex';
-  }
-  closeModalBtn.addEventListener('click', () => {
-    modalOverlay.style.display = 'none';
-  });
-  modalOverlay.addEventListener('click', (e) => {
-    if(e.target === modalOverlay) {
-      modalOverlay.style.display = 'none';
-    }
-  });
-
-  // Данные баннеров карусели
-  const bannerData = [
-    {
-      id: 'banner1',
-      tooltip: 'Игровой YouTube канал',
-      title: 'Канал, посвящённый играм и вайбовым стримам',
-      goto: 'https://www.youtube.com/@Vodyalagamezal'
-    },
-    {
-      id: 'banner2',
-      tooltip: 'Soundcloud страница',
-      title: 'Страница с моими треками. ПРЕДУПРЕЖДЕНИЕ: Это не для ушей здорового человека',
-      goto: 'https://www.SoundCloud.com/Vodyala'
-    },
-    {
-      id: 'banner3',
-      tooltip: 'YouTube канал Гайды для ИТТСУ',
-      title: 'Канал, посвящённый помощи для студентов ИТТСУ. Если вы учитесь в РУТ(МИИТ), то, возможно, я смогу Вам помочь. Смотрите наши гайды и СТРИМтенсивы.',
-      goto: 'https://www.youtube.com/@IttsuGuides'
-    },
-    {
-      id: 'banner4',
-      tooltip: 'Канал о жизни и общении',
-      title: 'Здесь вы можете стать настоящим автором контента и делать свои посты, общаясь с друими участниками канала и наслаждаться локальными мемами, треками и стикерами.',
-      goto: null // для последнего баннера отдельное большое окно
-    }
-  ];
-
-  bannerData.forEach(({id, tooltip, title, goto}, index) => {
-    const el = document.getElementById(id);
-    el.setAttribute('title', tooltip);
-    el.addEventListener('click', () => {
-      if(id === 'banner4') {
-        // открываем большое модальное окно для последнего баннера
-        document.getElementById('modalOverlayLarge').style.display = 'flex';
-      } else {
-        openModal(title, tooltip, goto, index);
-      }
-    });
-  });
-
-  // Закрытие большого модального окна
-  const modalOverlayLarge = document.getElementById('modalOverlayLarge');
-  const closeModalLarge = document.getElementById('closeModalLarge');
-  closeModalLarge.addEventListener('click', () => {
-    modalOverlayLarge.style.display = 'none';
-  });
-  modalOverlayLarge.addEventListener('click', (e) => {
-    if(e.target === modalOverlayLarge) {
-      modalOverlayLarge.style.display = 'none';
-    }
-  });
-</script>
+        window.addEventListener('resize', updateCarousel);
+    </script>
 </body>
 </html>
