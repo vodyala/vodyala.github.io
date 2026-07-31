@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Экосистема Насоуса</title>
+    <link rel="icon" type="image/png" href="5298742681573989917__1_-removebg-preview.png">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=JetBrains+Mono:wght@700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -15,13 +16,27 @@
             --nasos-orange: #ff6600;
         }
 
+        body.dark-mode {
+            --yellow: #E0E4E5; 
+            --hazel: #E0E4E5;  
+            --hazel-dark: #2C2C2C; 
+            --white: #1A1A1A; 
+            --bg-clean: #121212; 
+        }
+
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
         * {
             box-sizing: border-box;
+            transition: background-color 0.4s ease, color 0.4s ease, border-radius 0.4s ease, clip-path 0.4s ease;
         }
 
         body {
-            margin: 0;
-            padding: 0;
             font-family: 'Montserrat', sans-serif;
             background: var(--bg-clean);
             color: var(--hazel);
@@ -29,31 +44,64 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow-x: hidden;
             position: relative;
         }
 
-        /* === Десктопный бренд === */
+        /* === ЭФФЕКТ ВЖУХ === */
+        .theme-transitioning .orbit-wrapper,
+        .theme-transitioning .content-section,
+        .theme-transitioning .top-left-brand,
+        .theme-transitioning .mobile-top-brand {
+            transform: scale(0.92) skewX(-2deg);
+            filter: blur(3px);
+            opacity: 0.8;
+        }
+        .orbit-wrapper, .content-section, .top-left-brand, .mobile-top-brand {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.2s, opacity 0.2s;
+        }
+
+        @media (min-width: 769px) {
+            body { zoom: 135%; }
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            width: 48px;
+            height: 48px;
+            background: var(--yellow);
+            color: var(--hazel-dark);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        body.dark-mode .theme-toggle {
+            background: #333;
+            color: var(--yellow);
+            border-radius: 0;
+        }
+        .theme-toggle:hover { transform: scale(1.1) rotate(5deg); }
+        .theme-toggle svg { width: 24px; height: 24px; fill: currentColor; }
+
         .top-left-brand {
             position: absolute;
-            top: 25px;
+            top: 30px;
             left: 40px;
             display: flex;
             align-items: center;
             gap: 15px;
             z-index: 100;
             cursor: pointer;
-            background: rgba(253, 253, 250, 0.8);
-            padding: 5px 10px;
-            border-radius: 8px;
+            background: transparent; 
+            padding: 5px;
             user-select: none;
-            transition: transform 0.2s ease;
         }
-
-        .top-left-brand:hover {
-            transform: scale(1.02);
-        }
-
+        .top-left-brand:hover { transform: scale(1.02); }
         .brand-shape {
             width: 55px;
             height: 50px;
@@ -63,15 +111,16 @@
             align-items: center;
             justify-content: center;
         }
-
         .brand-shape .avatar-mini {
             width: 110%;
             height: 110%;
-            background-image: url('5298742681573989917.jpg');
+            background-image: url('5298742681573989917 (1).jpg');
             background-size: cover;
             background-position: center;
         }
-
+        body.dark-mode .brand-shape .avatar-mini {
+            background-image: url('5328195119158597819 (1).jpg');
+        }
         .brand-text {
             display: flex;
             flex-direction: column;
@@ -82,30 +131,19 @@
             color: var(--hazel);
             letter-spacing: -0.02em;
         }
+        .mobile-top-brand { display: none; }
 
-        /* Мобильный бренд */
-        .mobile-top-brand {
-            display: none;
-        }
-
-        /* Контейнер */
         .hub-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 40px 20px;
+            padding: 40px 20px 20px 20px;
             width: 100%;
             max-width: 1400px;
             flex-grow: 1;
         }
 
-        /* Мобильная сетка элементов */
-        .mobile-pebbles-grid {
-            display: none;
-        }
-
-        /* === Орбитальное кольцо === */
         .orbit-wrapper {
             position: relative;
             width: 640px;
@@ -113,10 +151,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-top: 40px;
+            margin-top: 10px;
             margin-bottom: 20px;
+            z-index: 10;
         }
-
         .rotator-zonal {
             position: absolute;
             width: 100%;
@@ -124,10 +162,7 @@
             animation: intro-spin 4s cubic-bezier(0.05, 0.7, 0.1, 1) 1, continuous-slow 60s linear 4s infinite;
             transform-origin: center center;
         }
-
-        .rotator-zonal:hover {
-            animation-play-state: paused;
-        }
+        .rotator-zonal:hover { animation-play-state: paused; }
 
         .central-logo {
             position: relative;
@@ -143,17 +178,16 @@
             box-shadow: 0 25px 60px rgba(95, 99, 79, 0.2);
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
-        .central-logo:hover {
-            transform: scale(1.08) rotate(-4deg);
-        }
-
+        .central-logo:hover { transform: scale(1.08) rotate(-4deg); }
         .central-logo .avatar-mock {
             width: 115%;
             height: 115%;
-            background-image: url('5298742681573989917.jpg');
+            background-image: url('5298742681573989917 (1).jpg');
             background-size: cover;
             background-position: center;
+        }
+        body.dark-mode .central-logo .avatar-mock {
+            background-image: url('5328195119158597819 (1).jpg');
         }
 
         .service-node {
@@ -166,44 +200,39 @@
             justify-content: center;
             text-decoration: none;
             font-weight: 900;
-            font-size: 11px;
+            font-size: 13px;
             letter-spacing: 0.02em;
             text-align: center;
             padding: 12px;
             box-shadow: 0 15px 35px rgba(95, 99, 79, 0.12);
             z-index: 15;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, clip-path 0.4s;
             animation: intro-spin-reverse 4s cubic-bezier(0.05, 0.7, 0.1, 1) 1, continuous-slow-reverse 60s linear 4s infinite;
             transform-origin: center center;
         }
-
-        .rotator-zonal:hover .service-node {
-            animation-play-state: paused;
-        }
-
+        .rotator-zonal:hover .service-node { animation-play-state: paused; }
         .service-node:hover {
             transform: scale(1.15) !important;
-            box-shadow: 0 20px 45px rgba(95, 99, 79, 0.25);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.25);
             z-index: 40;
         }
 
-        .service-node span {
-            font-size: 8px;
-            font-weight: 700;
-            text-transform: uppercase;
-            opacity: 0.7;
-            margin-top: 4px;
-        }
-
         .hazel-node { background: var(--hazel); color: var(--yellow); }
-        .hazel-node span { color: var(--white); }
         .yellow-node { background: var(--yellow); color: var(--hazel-dark); }
-        .yellow-node span { color: var(--hazel); }
+        
+        body.dark-mode .hazel-node { background: var(--hazel-dark); color: var(--yellow); }
+        body.dark-mode .yellow-node { background: var(--yellow); color: #121212; }
 
         .shape-squircle { border-radius: 46px; }
         .shape-flower { border-radius: 40% 60% 40% 60% / 60% 45% 55% 40%; }
         .shape-organic { border-radius: 60% 40% 60% 40% / 40% 60% 40% 60%; }
         .shape-rounded-star { border-radius: 35% 35% 35% 35% / 50% 50% 50% 50%; }
+
+        body.dark-mode .service-node { border-radius: 0 !important; }
+        body.dark-mode .shape-squircle { clip-path: polygon(10% 0, 100% 15%, 85% 100%, 0 90%); } 
+        body.dark-mode .shape-flower { clip-path: polygon(40% 0%, 100% 20%, 80% 100%, 20% 90%, 0% 40%); } 
+        body.dark-mode .shape-organic { clip-path: polygon(0% 15%, 100% 0%, 85% 100%, 15% 100%); } 
+        body.dark-mode .shape-rounded-star { clip-path: polygon(50% 0%, 100% 40%, 80% 100%, 20% 100%, 0% 40%); } 
 
         .node-1 { top: calc(50% - 310px); left: calc(50% - 65px); } 
         .node-2 { top: calc(50% - 238px); left: calc(50% + 108px); }
@@ -214,28 +243,28 @@
         .node-7 { top: calc(50% - 65px);  left: calc(50% - 310px); }
         .node-8 { top: calc(50% - 238px); left: calc(50% - 238px); }
 
-        /* === Карусель === */
         .content-section {
             width: 100%;
             max-width: 1160px;
             margin: 20px 0;
             position: relative;
+            z-index: 50;
         }
 
         .parallelogram-container {
             position: relative;
             background: var(--yellow);
-            transform: skewX(-14deg);
-            border-radius: 12px;
+            transform: skewX(-25deg); 
+            border-radius: 0; 
             padding: 35px 65px;
-            box-shadow: 0 30px 65px rgba(95, 99, 79, 0.15);
+            box-shadow: 0 30px 65px rgba(0,0,0,0.15);
             max-width: 100%;
         }
 
         .carousel-viewport {
             overflow: hidden;
             width: 100%;
-            transform: skewX(14deg);
+            transform: skewX(25deg);
         }
 
         .carousel-track {
@@ -250,19 +279,19 @@
             flex: 0 0 calc(50% - 13px);
             background: var(--white);
             height: 320px;
-            border-radius: 14px;
-            box-shadow: 0 15px 35px rgba(95, 99, 79, 0.08);
+            border-radius: 0 !important;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
             display: flex;
             flex-direction: column;
             overflow: hidden;
             position: relative;
             cursor: pointer;
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease, border-radius 0.4s;
         }
 
         .card:hover {
             transform: translateY(-20px);
-            box-shadow: 0 25px 50px rgba(95, 99, 79, 0.2);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
         }
 
         .card-img {
@@ -271,12 +300,7 @@
             position: relative;
             overflow: hidden;
         }
-
-        .card-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .card-img img { width: 100%; height: 100%; object-fit: cover; }
 
         .nasos-cyber-cover {
             width: 100%;
@@ -288,10 +312,11 @@
             overflow: hidden;
             position: relative;
         }
+        body.dark-mode .nasos-cyber-cover { background: #111; }
 
         .nasos-cyber-text {
             font-family: 'Orbitron', 'JetBrains Mono', monospace;
-            font-size: 26px;
+            font-size: clamp(12px, 3.2vw, 26px);
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -300,12 +325,9 @@
             -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 2px 8px rgba(245, 176, 65, 0.4));
             user-select: none;
-            transition: transform 0.3s ease;
+            white-space: nowrap;
         }
-
-        .card:hover .nasos-cyber-text {
-            transform: scale(1.05);
-        }
+        .card:hover .nasos-cyber-text { transform: scale(1.05); }
 
         .card-info {
             padding: 15px 20px;
@@ -314,7 +336,6 @@
             flex-direction: column;
             justify-content: center;
         }
-
         .card-info h3 {
             margin: 0 0 4px 0;
             font-size: 18px;
@@ -322,7 +343,6 @@
             color: var(--hazel-dark);
             text-transform: uppercase;
         }
-
         .card-info p {
             margin: 0;
             font-size: 12px;
@@ -330,6 +350,8 @@
             color: #666;
             font-weight: 700;
         }
+        body.dark-mode .card-info h3 { color: var(--yellow); }
+        body.dark-mode .card-info p { color: #aaa; }
 
         .nav-arrow {
             position: absolute;
@@ -346,20 +368,23 @@
             z-index: 40;
             font-size: 22px;
             box-shadow: 0 10px 20px rgba(95, 99, 79, 0.15);
-            transform: translateY(-50%) skewX(14deg);
-            transition: all 0.15s ease;
+            transform: translateY(-50%) skewX(25deg);
+            transition: all 0.4s ease;
         }
-
+        body.dark-mode .nav-arrow { 
+            background: var(--hazel-dark); 
+            border-radius: 0;
+            clip-path: none;
+        }
         .nav-arrow:hover {
             background: var(--white);
             color: var(--hazel);
-            transform: translateY(-50%) skewX(14deg) scale(1.1);
+            transform: translateY(-50%) skewX(25deg) scale(1.1);
         }
-
+        body.dark-mode .nav-arrow:hover { color: #111; }
         .arrow-left { left: 8px; }
         .arrow-right { right: 8px; }
 
-        /* === Диалоговое окно === */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -376,12 +401,7 @@
             pointer-events: none;
             transition: opacity 0.25s ease;
         }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .nasos-modal-box {
             background: #1a1a1a;
             border: 3px solid var(--nasos-orange);
@@ -396,11 +416,7 @@
             font-family: 'JetBrains Mono', monospace;
             text-align: center;
         }
-
-        .modal-overlay.active .nasos-modal-box {
-            transform: scale(1);
-        }
-
+        .modal-overlay.active .nasos-modal-box { transform: scale(1); }
         .modal-close-x {
             position: absolute;
             top: 15px;
@@ -410,13 +426,8 @@
             font-weight: 900;
             cursor: pointer;
             user-select: none;
-            transition: transform 0.1s ease;
         }
-
-        .modal-close-x:hover {
-            transform: scale(1.1);
-        }
-
+        .modal-close-x:hover { transform: scale(1.1); }
         .modal-title {
             color: var(--nasos-orange);
             font-size: 42px;
@@ -424,7 +435,6 @@
             margin: 10px 0 15px 0;
             letter-spacing: 4px;
         }
-
         .modal-desc {
             color: var(--nasos-orange);
             font-size: 14px;
@@ -433,14 +443,12 @@
             margin: 0 auto 30px auto;
             max-width: 85%;
         }
-
         .modal-actions-grid {
             display: flex;
             gap: 15px;
             justify-content: center;
             flex-wrap: wrap;
         }
-
         .modal-btn {
             background: transparent;
             border: 2px solid var(--nasos-orange);
@@ -454,12 +462,7 @@
             cursor: pointer;
             transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
         }
-
-        .modal-btn:hover {
-            background: var(--nasos-orange);
-            color: #1a1a1a;
-            transform: translateY(-2px);
-        }
+        .modal-btn:hover { background: var(--nasos-orange); color: #1a1a1a; transform: translateY(-2px); }
 
         footer {
             background: transparent;
@@ -470,8 +473,9 @@
             align-items: center;
             gap: 15px;
             margin-top: auto;
+            position: relative;
+            z-index: 100;
         }
-
         .footer-logo-link {
             text-decoration: none;
             display: flex;
@@ -483,13 +487,15 @@
             text-transform: uppercase;
             cursor: pointer;
         }
-
+        body.dark-mode .footer-logo-link { color: var(--yellow); }
+        
         .footer-logo-shape {
             background: var(--yellow);
             padding: 6px 20px;
             clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
             color: var(--hazel-dark);
         }
+        body.dark-mode .footer-logo-shape { color: #111; }
 
         .email-link {
             color: var(--hazel);
@@ -498,7 +504,6 @@
             font-size: 15px;
             border-bottom: 2px dashed var(--yellow);
         }
-
         .app-button {
             display: flex;
             align-items: center;
@@ -513,13 +518,9 @@
             text-transform: uppercase;
             box-shadow: 0 8px 20px rgba(95, 99, 79, 0.15);
         }
-
-        .app-button:hover {
-            background: var(--yellow);
-            color: var(--hazel);
-            transform: translateY(-2px);
-        }
-
+        body.dark-mode .app-button { background: var(--hazel-dark); color: var(--yellow); }
+        .app-button:hover { background: var(--yellow); color: var(--hazel); transform: translateY(-2px); }
+        body.dark-mode .app-button:hover { background: var(--yellow); color: #111; }
         .app-button svg { width: 16px; height: 16px; fill: currentColor; }
         .copyright { font-size: 10px; font-weight: 700; opacity: 0.4; }
 
@@ -532,7 +533,6 @@
             0% { transform: rotate(1440deg); }
             100% { transform: rotate(1800deg); }
         }
-
         @keyframes intro-spin-reverse {
             0% { transform: rotate(0deg); }
             30% { transform: rotate(-1080deg); }
@@ -540,101 +540,158 @@
         }
         @keyframes continuous-slow-reverse {
             0% { transform: rotate(-1440deg); }
-            100% { transform: rotate(-1800deg); }
+            100% { transform: rotate(-1800deg); } 
         }
 
+        /* === МОБИЛЬНАЯ ВЕРСИЯ === */
         @media (max-width: 768px) {
-            .top-left-brand { 
-                display: none; 
-            }
-
+            .top-left-brand { display: none; }
             .mobile-top-brand {
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 gap: 12px;
                 width: 100%;
-                padding: 20px 10px 5px 10px;
+                padding: 10px 10px 0 10px;
+                margin-top: 0; 
                 background: transparent;
                 user-select: none;
             }
 
+            .theme-toggle {
+                top: 15px;
+                right: 15px;
+                width: 44px;
+                height: 44px;
+            }
+
+            /* ДВИЖЕНИЕ 1: Барабан — наверх */
             .orbit-wrapper { 
-                display: none; 
+                display: flex !important; 
+                transform: scale(0.55, 0.75); 
+                margin-top: -100px; /* Сильно подняли барабан наверх */
+                margin-bottom: -150px; 
+                z-index: 10;
             }
 
-            .mobile-pebbles-grid {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
+            /* ДВИЖЕНИЕ 2: Параллелограмм вместе со всем — ниже (дважды наверх по логике, смещаем позицию моста) */
+            .content-section {
+                margin-top: 20px; /* Опустили полосу ниже, чтобы она встала куда надо */
+                background: #e8c627; 
+                clip-path: polygon(0 35vw, 100% 0, 100% calc(100% - 35vw), 0% 100%);
+                padding-top: 25vw; 
+                padding-bottom: 22vw; 
+                padding-left: 10px;
+                padding-right: 10px;
                 width: 100%;
-                max-width: 480px;
-                margin: 25px 0 35px 0;
-                padding: 0 10px;
+                position: relative;
+                z-index: 50;
+            }
+            body.dark-mode .content-section {
+                background: #aab0b4;
             }
 
-            .pebble-node {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                text-decoration: none;
-                font-weight: 900;
-                font-size: 12px;
-                text-align: center;
-                padding: 20px 10px;
-                min-height: 95px;
-                box-shadow: 0 8px 20px rgba(95, 99, 79, 0.1);
-                transition: transform 0.15s ease;
+            footer {
+                padding-top: 10px;
+                margin-top: -15vw; 
+                padding-bottom: 30px;
+                position: relative;
+                z-index: 60;
             }
-
-            .pebble-node:active {
-                transform: scale(0.96);
-            }
-
-            .pebble-node span {
-                font-size: 9px;
-                font-weight: 700;
-                text-transform: uppercase;
-                opacity: 0.8;
-                margin-top: 5px;
-            }
-
-            .pebble-1 { border-radius: 45% 35% 40% 50% / 50% 40% 55% 45%; }
-            .pebble-2 { border-radius: 35% 50% 45% 40% / 45% 55% 40% 50%; }
-            .pebble-3 { border-radius: 50% 40% 35% 45% / 40% 45% 50% 55%; }
-            .pebble-4 { border-radius: 40% 45% 50% 35% / 55% 40% 45% 50%; }
-            .pebble-5 { border-radius: 45% 50% 40% 40% / 50% 45% 55% 40%; }
-            .pebble-6 { border-radius: 35% 40% 50% 45% / 40% 55% 45% 50%; }
-            .pebble-7 { border-radius: 50% 35% 45% 40% / 55% 40% 50% 45%; }
-            .pebble-8 { border-radius: 40% 50% 35% 50% / 45% 50% 40% 55%; }
 
             .parallelogram-container { 
                 transform: skewX(0deg); 
-                padding: 25px 15px; 
+                padding: 0; 
                 margin: 0; 
-                border-radius: 16px;
+                background: transparent;
+                box-shadow: none;
             }
             .carousel-viewport { 
                 transform: skewX(0deg); 
+                overflow: visible;
             }
+            .carousel-track {
+                padding-top: 0;
+                margin-top: 0;
+                gap: 12px;
+            }
+
             .card { 
-                flex: 0 0 100%; 
-                height: 300px; 
-                border-radius: 12px;
+                flex: 0 0 calc(50% - 6px); 
+                height: 250px; 
+                border-radius: 0 !important; 
+                clip-path: polygon(0 10vw, 100% 0, 100% calc(100% - 10vw), 0% 100%);
             }
+            .card:nth-child(odd) { transform: translateY(10vw); }
+            .card:nth-child(even) { transform: translateY(-5vw); }
+            
+            .card:nth-child(odd):hover { transform: translateY(5px); }
+            .card:nth-child(even):hover { transform: translateY(calc(-5vw - 5px)); }
+
+            /* Область текста в ступеньках больше, картинки чуть меньше */
+            .card-img {
+                height: 48% !important;
+            }
+            .card-info {
+                height: 52% !important;
+                padding: 12px 15px; 
+                justify-content: flex-start;
+            }
+            .card-info h3 { font-size: 13px; margin-bottom: 2px; }
+            .card-info p { font-size: 10px; line-height: 1.3; }
+
+            /* Стрелки чуть ниже */
+            .carousel-viewport::after {
+                content: '';
+                position: absolute;
+                top: -15vw; /* Стрелки ниже */
+                right: 10px;
+                width: 90px;
+                height: 42px;
+                background: var(--hazel);
+                border-radius: 0; 
+                clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+                z-index: 35;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                transition: background 0.4s;
+            }
+            body.dark-mode .carousel-viewport::after {
+                background: var(--hazel-dark);
+            }
+
             .nav-arrow { 
-                transform: translateY(-50%) skewX(0deg); 
-                width: 45px; 
-                height: 45px; 
+                transform: skewX(0deg) !important; 
+                width: 38px; 
+                height: 38px; 
+                top: auto;
+                box-shadow: none;
+                background: transparent !important;
+                border-radius: 0 !important;
+                clip-path: none !important;
             }
-            .arrow-left { left: -5px; }
-            .arrow-right { right: -5px; }
-            .nasos-cyber-text { font-size: 20px; }
+            .arrow-left { 
+                left: auto; 
+                right: 48px; 
+                top: -13.5vw; /* Стрелки ниже */
+                z-index: 40;
+            }
+            .arrow-right { 
+                right: 12px; 
+                top: -13.5vw; /* Стрелки ниже */
+                z-index: 40;
+            }
+            
+            .nasos-cyber-text { font-size: 18px; }
         }
     </style>
 </head>
 <body>
+
+    <div class="theme-toggle" onclick="toggleTheme()" title="Сменить тему">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3C7.03 3 3 7.03 3 12C3 16.97 7.03 21 12 21C16.97 21 21 16.97 21 12C21 7.03 16.97 3 12 3ZM12 19.5V4.5C16.14 4.5 19.5 7.86 19.5 12C19.5 16.14 16.14 19.5 12 19.5Z"/>
+        </svg>
+    </div>
 
     <div class="top-left-brand" onclick="window.location.reload()">
         <div class="brand-shape">
@@ -646,7 +703,7 @@
         </div>
     </div>
 
-    <div class="mobile-top-brand">
+    <div class="mobile-top-brand" onclick="window.location.reload()">
         <div class="brand-shape">
             <div class="avatar-mini"></div>
         </div>
@@ -659,31 +716,20 @@
     <div class="hub-container">
         
         <div class="orbit-wrapper">
-            <div class="central-logo" onclick="window.open('https://t.me/NASOSlinks', '_blank')">
+            <div class="central-logo" onclick="window.open('https://t.me/nasoseco', '_blank')">
                 <div class="avatar-mock" title="Экосистема Насоуса"></div>
             </div>
             
             <div class="rotator-zonal">
-                <a href="https://youtube.com/@vodyala" target="_blank" class="service-node hazel-node shape-squircle node-1">YOUTUBE<span>Main</span></a>
-                <a href="https://t.me/vodyalayoutube" target="_blank" class="service-node yellow-node shape-flower node-2">TELEGRAM<span>Channel</span></a>
-                <a href="https://dzen.ru/id/6223a10a9ab6767e3451fc15" target="_blank" class="service-node hazel-node shape-organic node-3">ДЗЕН<span>Блог</span></a>
-                <a href="https://m.vk.com/id692819808" target="_blank" class="service-node yellow-node shape-rounded-star node-4">ВК<span>Профиль</span></a>
-                <a href="https://www.tiktok.com/@vodyala" target="_blank" class="service-node hazel-node shape-squircle node-5">TIKTOK<span>Shorts</span></a>
-                <a href="https://www.soundcloud.com/vodyala" target="_blank" class="service-node yellow-node shape-flower node-6">SOUNDCLOUD<span>Tracks</span></a>
-                <a href="https://www.roblox.com/users/1650696052/profile" target="_blank" class="service-node hazel-node shape-organic node-7">ROBLOX<span>Profile</span></a>
-                <a href="https://t.me/vodyalayoutubepaygroup" target="_blank" class="service-node yellow-node shape-rounded-star node-8">BOOSTY<span>Support</span></a>
+                <a href="https://youtube.com/@vodyala" target="_blank" class="service-node hazel-node shape-squircle node-1">YOUTUBE</a>
+                <a href="https://t.me/vodyalayoutube" target="_blank" class="service-node yellow-node shape-flower node-2">TELEGRAM</a>
+                <a href="https://dzen.ru/id/6223a10a9ab6767e3451fc15" target="_blank" class="service-node hazel-node shape-organic node-3">ДЗЕН</a>
+                <a href="https://m.vk.com/id692819808" target="_blank" class="service-node yellow-node shape-rounded-star node-4">ВК</a>
+                <a href="https://www.tiktok.com/@vodyala" target="_blank" class="service-node hazel-node shape-squircle node-5">TIKTOK</a>
+                <a href="https://www.soundcloud.com/vodyala" target="_blank" class="service-node yellow-node shape-flower node-6">SOUNDCLOUD</a>
+                <a href="https://www.roblox.com/users/1650696052/profile" target="_blank" class="service-node hazel-node shape-organic node-7">ROBLOX</a>
+                <a href="https://t.me/vodyalayoutubepaygroup" target="_blank" class="service-node yellow-node shape-rounded-star node-8">BOOSTY</a>
             </div>
-        </div>
-
-        <div class="mobile-pebbles-grid">
-            <a href="https://youtube.com/@vodyala" target="_blank" class="pebble-node hazel-node pebble-1">YOUTUBE<span>Main</span></a>
-            <a href="https://t.me/vodyalayoutube" target="_blank" class="pebble-node yellow-node pebble-2">TELEGRAM<span>Channel</span></a>
-            <a href="https://dzen.ru/id/6223a10a9ab6767e3451fc15" target="_blank" class="pebble-node hazel-node pebble-3">ДЗЕН<span>Блог</span></a>
-            <a href="https://m.vk.com/id692819808" target="_blank" class="pebble-node yellow-node pebble-4">ВК<span>Профиль</span></a>
-            <a href="https://www.tiktok.com/@vodyala" target="_blank" class="pebble-node hazel-node pebble-5">TIKTOK<span>Shorts</span></a>
-            <a href="https://www.soundcloud.com/vodyala" target="_blank" class="pebble-node yellow-node pebble-6">SOUNDCLOUD<span>Tracks</span></a>
-            <a href="https://www.roblox.com/users/1650696052/profile" target="_blank" class="pebble-node hazel-node pebble-7">ROBLOX<span>Profile</span></a>
-            <a href="https://t.me/vodyalayoutubepaygroup" target="_blank" class="pebble-node yellow-node pebble-8">BOOSTY<span>Support</span></a>
         </div>
 
         <div class="content-section">
@@ -745,10 +791,9 @@
         <div class="nasos-modal-box" onclick="event.stopPropagation()">
             <div class="modal-close-x" onclick="closeNasosModal(null)">✕✕✕</div>
             <div class="modal-title">NASOS</div>
-            <div class="modal-desc">Это общество свидетелей Насоуса с фирменными мемами, треками, стикерами и контентом. Насоооооооооуууус🤘
-</div>
+            <div class="modal-desc">Это общество свидетелей Насоуса с фирменными мемами, треками, стикерами и контентом. Насоооооооооуууус🤘</div>
             <div class="modal-actions-grid">
-                <button class="modal-btn" onclick="window.open('https://t.me/NASOSmiit', '_blank')">Войти</button>
+                <button class="modal-btn" onclick="window.open('https://t.me/nasoooooooos', '_blank')">Войти</button>
                 <button class="modal-btn" onclick="window.open('https://www.soundcloud.com/vodyala', '_blank')">Треки</button>
                 <button class="modal-btn" onclick="window.open('https://t.me/addstickers/NasosStickers', '_blank')">Стикеры</button>
             </div>
@@ -771,6 +816,18 @@
     </footer>
 
     <script>
+        function toggleTheme() {
+            document.body.classList.add('theme-transitioning');
+            
+            setTimeout(() => {
+                document.body.classList.toggle('dark-mode');
+            }, 200);
+
+            setTimeout(() => {
+                document.body.classList.remove('theme-transitioning');
+            }, 450);
+        }
+
         const track = document.getElementById('track');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
@@ -778,23 +835,27 @@
         const nasosModal = document.getElementById('nasosModal');
         let index = 0;
 
-        function getCardsPerView() { return window.innerWidth <= 768 ? 1 : 2; }
+        function getCardsPerView() { 
+            return window.innerWidth <= 768 ? 2 : 2; 
+        }
 
         function updateCarousel() {
             const cardWidth = cards[0].getBoundingClientRect().width;
-            const gap = 25; 
+            const gap = window.innerWidth <= 768 ? 12 : 25; 
             const amountToMove = (cardWidth + gap) * index;
             track.style.transform = `translateX(-${amountToMove}px)`;
         }
 
         nextBtn.addEventListener('click', () => {
-            const maxIndex = cards.length - getCardsPerView();
-            index = (index < maxIndex) ? index + 1 : 0;
+            const cardsPerView = getCardsPerView();
+            const maxIndex = cards.length - cardsPerView;
+            index = (index + cardsPerView <= maxIndex) ? index + cardsPerView : 0;
             updateCarousel();
         });
 
         prevBtn.addEventListener('click', () => {
-            index = (index > 0) ? index - 1 : cards.length - getCardsPerView();
+            const cardsPerView = getCardsPerView();
+            index = (index - cardsPerView >= 0) ? index - cardsPerView : cards.length - cardsPerView;
             updateCarousel();
         });
 
