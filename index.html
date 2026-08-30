@@ -609,9 +609,11 @@
             background-size: contain;
             background-position: center;
             background-repeat: no-repeat;
-            filter: drop-shadow(0 8px 18px rgba(0,0,0,0.4));
+            filter: var(--logo-filter);
+            transition: filter 0.4s ease;
         }
 
+        /* Стилизованный крестик модалок */
         .modal-close-tab {
             position: absolute;
             top: -18px;
@@ -746,16 +748,6 @@
             color: var(--hazel-dark);
         }
         body.special-cyber-dark .footer-logo-shape { color: #111; }
-
-        .footer-slogan {
-            font-size: 12px;
-            font-weight: 900;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: var(--text-color);
-            opacity: 0.8;
-            margin-top: -4px;
-        }
 
         .email-link {
             color: var(--text-color);
@@ -996,10 +988,11 @@
                 height: 110px;
             }
 
+            /* На мобиле логотип всплывающего насосеко опущен пониже */
             .holder-logo-direct {
-                top: -10vw;
-                width: 140px;
-                height: 140px;
+                top: -3vw;
+                width: 130px;
+                height: 130px;
             }
 
             .modal-close-tab {
@@ -1239,7 +1232,7 @@
             </svg>
             App Android
         </div>
-        <div class="copyright">© 2026 Holding Nasos Systems</div>
+        <div class="copyright">© 2026 Holding Nasos Systems[cite: 1]</div>
     </footer>
 
     <script>
@@ -1254,7 +1247,7 @@
             { text: "BOOSTY", href: "https://t.me/vodyalayoutubepaygroup" }
         ];
 
-        // Залитые Material 3 фоны для месяцев
+        // Залитые Material 3 фоны для месяцев (с точными фильтрами для окраски лого)
         const monthPalettes = [
             /* 0: Январь */   { isSpecialDark: false, isDefault: false, yellow: '#2563EB', hazel: '#1E3A8A', hazelDark: '#0F172A', bgLight: '#BFDBFE', bgDark: '#0B1528', filter: 'hue-rotate(185deg) saturate(1.5)' },
             /* 1: Февраль */  { isSpecialDark: false, isDefault: false, yellow: '#7C3AED', hazel: '#4C1D95', hazelDark: '#2E1065', bgLight: '#DDD6FE', bgDark: '#170B2C', filter: 'hue-rotate(225deg) saturate(1.5)' },
@@ -1263,8 +1256,8 @@
             /* 4: Май */      { isSpecialDark: false, isDefault: false, yellow: '#16A34A', hazel: '#14532D', hazelDark: '#052E16', bgLight: '#BBF7D0', bgDark: '#021C0D', filter: 'hue-rotate(50deg) saturate(1.5)' },
             /* 5: Июнь */     { isSpecialDark: false, isDefault: true,  yellow: '#fdd835', hazel: '#5f634f', hazelDark: '#494d3d', bgLight: '#fdfdfa', bgDark: '#121212', filter: 'none' },
             /* 6: Июль */     { isSpecialDark: false, isDefault: false, yellow: '#0284C7', hazel: '#0C4A6E', hazelDark: '#082F49', bgLight: '#BAE6FD', bgDark: '#051D2E', filter: 'hue-rotate(195deg) saturate(1.6)' },
-            /* 7: Август */   { isSpecialDark: false, isDefault: false, yellow: '#D97706', hazel: '#78350F', hazelDark: '#451A03', bgLight: '#FDE68A', bgDark: '#260F02', filter: 'hue-rotate(345deg) saturate(1.4)' },
-            /* 8: Сентябрь */ { isSpecialDark: false, isDefault: false, yellow: '#EA580C', hazel: '#7C2D12', hazelDark: '#431407', bgLight: '#FED7AA', bgDark: '#240B04', filter: 'hue-rotate(355deg) saturate(1.6)' },
+            /* 7: Август (Оранжевая) */ { isSpecialDark: false, isDefault: false, yellow: '#D97706', hazel: '#78350F', hazelDark: '#451A03', bgLight: '#FDE68A', bgDark: '#260F02', filter: 'sepia(1) saturate(5) hue-rotate(345deg)' },
+            /* 8: Сентябрь */ { isSpecialDark: false, isDefault: false, yellow: '#EA580C', hazel: '#7C2D12', hazelDark: '#431407', bgLight: '#FED7AA', bgDark: '#240B04', filter: 'sepia(1) saturate(6) hue-rotate(340deg)' },
             /* 9: Октябрь */  { isSpecialDark: false, isDefault: false, yellow: '#DC2626', hazel: '#7F1D1D', hazelDark: '#450A0A', bgLight: '#FECACA', bgDark: '#260606', filter: 'hue-rotate(330deg) saturate(1.7)' },
             /* 10: Ноябрь */  { isSpecialDark: false, isDefault: false, yellow: '#E11D48', hazel: '#881337', hazelDark: '#4C0519', bgLight: '#FECDD3', bgDark: '#24030C', filter: 'hue-rotate(310deg) saturate(1.5)' },
             /* 11: Декабрь */ { isSpecialDark: false, isDefault: false, yellow: '#06B6D4', hazel: '#155E75', hazelDark: '#0E3B4A', bgLight: '#A5F3FC', bgDark: '#061E26', filter: 'hue-rotate(145deg) saturate(1.5)' }
@@ -1275,9 +1268,9 @@
             { isSpecialDark: false, isDefault: true,  yellow: '#fdd835', hazel: '#5f634f', hazelDark: '#494d3d', bgLight: '#fdfdfa', bgDark: '#121212', filter: 'none' },
             { isSpecialDark: false, isDefault: false, yellow: '#2563EB', hazel: '#1E3A8A', hazelDark: '#0F172A', bgLight: '#BFDBFE', bgDark: '#0B1528', filter: 'hue-rotate(185deg) saturate(1.5)' },
             { isSpecialDark: false, isDefault: false, yellow: '#65A30D', hazel: '#365314', hazelDark: '#1A2E05', bgLight: '#D9F99D', bgDark: '#0F1C03', filter: 'hue-rotate(70deg) saturate(1.7)' },
-            { isSpecialDark: false, isDefault: false, yellow: '#EA580C', hazel: '#7C2D12', hazelDark: '#431407', bgLight: '#FED7AA', bgDark: '#240B04', filter: 'hue-rotate(355deg) saturate(1.6)' },
+            { isSpecialDark: false, isDefault: false, yellow: '#EA580C', hazel: '#7C2D12', hazelDark: '#431407', bgLight: '#FED7AA', bgDark: '#240B04', filter: 'sepia(1) saturate(6) hue-rotate(340deg)' },
             { isSpecialDark: false, isDefault: false, yellow: '#7C3AED', hazel: '#4C1D95', hazelDark: '#2E1065', bgLight: '#DDD6FE', bgDark: '#170B2C', filter: 'hue-rotate(225deg) saturate(1.5)' },
-            { isSpecialDark: false, isDefault: false, yellow: '#D97706', hazel: '#78350F', hazelDark: '#451A03', bgLight: '#FDE68A', bgDark: '#260F02', filter: 'hue-rotate(345deg) saturate(1.4)' },
+            { isSpecialDark: false, isDefault: false, yellow: '#D97706', hazel: '#78350F', hazelDark: '#451A03', bgLight: '#FDE68A', bgDark: '#260F02', filter: 'sepia(1) saturate(5) hue-rotate(345deg)' },
             { isSpecialDark: false, isDefault: false, yellow: '#0891B2', hazel: '#164E63', hazelDark: '#083344', bgLight: '#A5F3FC', bgDark: '#041B24', filter: 'hue-rotate(150deg) saturate(1.4)' },
             { isSpecialDark: false, isDefault: false, yellow: '#DB2777', hazel: '#831843', hazelDark: '#500727', bgLight: '#FBCFE8', bgDark: '#260413', filter: 'hue-rotate(295deg) saturate(1.7)' }
         ];
@@ -1326,6 +1319,11 @@
                 applyPalette(monthPalettes[month]);
             }
         }
+
+        // Принудительное применение стилей и фильтра сразу после загрузки DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            initSeasonTheme();
+        });
         initSeasonTheme();
 
         function restartRotatorAnimation() {
