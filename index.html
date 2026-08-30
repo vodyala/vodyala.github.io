@@ -5,23 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Экосистема Насоуса</title>
     <link rel="icon" type="image/png" href="5298742681573989917__1_-removebg-preview.png">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=JetBrains+Mono:wght@700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=JetBrains+Mono:wght@700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --yellow: #fdd835;
             --hazel: #5f634f;
             --hazel-dark: #494d3d;
-            --white: #ffffff;
-            --bg-clean: #fdfdfa;
             --nasos-orange: #ff6600;
+
+            --bg-clean: #fdfdfa;
+            --text-color: var(--hazel);
+            --card-bg: #ffffff;
+            --subtext-color: #666666;
+            --logo-filter: none;
         }
 
-        body.dark-mode {
-            --yellow: #E0E4E5; 
-            --hazel: #E0E4E5;  
-            --hazel-dark: #2C2C2C; 
-            --white: #1A1A1A; 
-            --bg-clean: #121212; 
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-clean: #121212;
+                --text-color: #e0e4e5;
+                --card-bg: #1e1e1e;
+                --subtext-color: #aaaaaa;
+            }
+        }
+
+        body.mode-light {
+            --text-color: var(--hazel) !important;
+            --card-bg: #ffffff !important;
+            --subtext-color: #666666 !important;
+        }
+
+        body.mode-dark {
+            --text-color: #e0e4e5 !important;
+            --card-bg: #1e1e1e !important;
+            --subtext-color: #aaaaaa !important;
+        }
+
+        body.special-cyber-dark {
+            --yellow: #E0E4E5 !important; 
+            --hazel: #E0E4E5 !important;  
+            --hazel-dark: #2C2C2C !important; 
+            --card-bg: #1A1A1A !important; 
+            --bg-clean: #121212 !important; 
+            --text-color: #E0E4E5 !important;
+            --logo-filter: none !important;
         }
 
         html, body {
@@ -39,7 +66,7 @@
         body {
             font-family: 'Montserrat', sans-serif;
             background: var(--bg-clean);
-            color: var(--hazel);
+            color: var(--text-color);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -64,10 +91,19 @@
             body { zoom: 135%; }
         }
 
-        .theme-toggle {
+        /* Блок управления темами */
+        .theme-controls-wrapper {
             position: absolute;
             top: 30px;
             right: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .theme-toggle {
+            position: relative;
             width: 48px;
             height: 48px;
             background: var(--yellow);
@@ -77,16 +113,63 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 1000;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            user-select: none;
+            touch-action: manipulation;
         }
-        body.dark-mode .theme-toggle {
+        body.special-cyber-dark .theme-toggle {
             background: #333;
             color: var(--yellow);
             border-radius: 0;
         }
         .theme-toggle:hover { transform: scale(1.1) rotate(5deg); }
-        .theme-toggle svg { width: 24px; height: 24px; fill: currentColor; }
+        .theme-toggle svg { width: 24px; height: 24px; fill: currentColor; pointer-events: none; }
+
+        .theme-dot-indicator {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--hazel-dark);
+            border: 2px solid var(--yellow);
+            display: none;
+            pointer-events: none;
+        }
+        body.palette-mode-active .theme-dot-indicator {
+            display: block;
+        }
+
+        .theme-cancel-btn {
+            width: 48px;
+            height: 48px;
+            background: var(--hazel);
+            color: var(--yellow);
+            border-radius: 16px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            user-select: none;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        .theme-cancel-btn:hover {
+            background: var(--hazel-dark);
+            color: #ffffff;
+            transform: scale(1.1);
+        }
+        .theme-cancel-btn svg {
+            width: 22px;
+            height: 22px;
+            stroke: currentColor;
+            stroke-width: 3.5;
+            stroke-linecap: round;
+        }
+        body.palette-mode-active .theme-cancel-btn {
+            display: flex;
+        }
 
         .top-left-brand {
             position: absolute;
@@ -105,21 +188,26 @@
         .brand-shape {
             width: 55px;
             height: 50px;
-            background: var(--yellow);
-            clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
+            background: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .brand-shape .avatar-mini {
-            width: 110%;
-            height: 110%;
-            background-image: url('5298742681573989917 (1).jpg');
-            background-size: cover;
+            width: 100%;
+            height: 100%;
+            background-image: url('5298742681573989917__1_-removebg-preview.png');
+            background-size: contain;
             background-position: center;
+            background-repeat: no-repeat;
+            filter: var(--logo-filter);
+            transition: filter 0.4s ease;
         }
-        body.dark-mode .brand-shape .avatar-mini {
+        body.special-cyber-dark .brand-shape .avatar-mini {
             background-image: url('5328195119158597819 (1).jpg');
+            clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
+            background-size: cover;
+            filter: none;
         }
         .brand-text {
             display: flex;
@@ -128,7 +216,7 @@
             text-transform: uppercase;
             font-size: 14px;
             line-height: 1.1;
-            color: var(--hazel);
+            color: var(--text-color);
             letter-spacing: -0.02em;
         }
         .mobile-top-brand { display: none; }
@@ -155,6 +243,7 @@
             margin-bottom: 20px;
             z-index: 10;
         }
+
         .rotator-zonal {
             position: absolute;
             width: 100%;
@@ -164,30 +253,40 @@
         }
         .rotator-zonal:hover { animation-play-state: paused; }
 
+        body.palette-mode-active .rotator-zonal {
+            animation: none !important;
+            transform: none !important;
+        }
+
         .central-logo {
             position: relative;
-            width: 200px;
-            height: 200px;
-            background: var(--yellow);
-            clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
+            width: 240px;
+            height: 240px;
+            background: transparent;
             cursor: pointer;
             z-index: 25;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 25px 60px rgba(95, 99, 79, 0.2);
+            filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.2));
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .central-logo:hover { transform: scale(1.08) rotate(-4deg); }
         .central-logo .avatar-mock {
-            width: 115%;
-            height: 115%;
-            background-image: url('5298742681573989917 (1).jpg');
-            background-size: cover;
+            width: 100%;
+            height: 100%;
+            background-image: url('5298742681573989917__1_-removebg-preview.png');
+            background-size: contain;
             background-position: center;
+            background-repeat: no-repeat;
+            filter: var(--logo-filter);
+            transition: filter 0.4s ease;
         }
-        body.dark-mode .central-logo .avatar-mock {
+        body.special-cyber-dark .central-logo .avatar-mock {
             background-image: url('5328195119158597819 (1).jpg');
+            clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
+            background-size: cover;
+            filter: none;
         }
 
         .service-node {
@@ -204,8 +303,9 @@
             letter-spacing: 0.02em;
             text-align: center;
             padding: 12px;
-            box-shadow: 0 15px 35px rgba(95, 99, 79, 0.12);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
             z-index: 15;
+            cursor: pointer;
             transition: transform 0.2s ease, box-shadow 0.2s ease, clip-path 0.4s;
             animation: intro-spin-reverse 4s cubic-bezier(0.05, 0.7, 0.1, 1) 1, continuous-slow-reverse 60s linear 4s infinite;
             transform-origin: center center;
@@ -217,22 +317,36 @@
             z-index: 40;
         }
 
+        body.palette-mode-active .service-node {
+            animation: iconJiggle 0.28s ease-in-out infinite alternate !important;
+        }
+        body.palette-mode-active .service-node:nth-child(even) {
+            animation-duration: 0.32s !important;
+            animation-direction: alternate-reverse !important;
+        }
+
+        @keyframes iconJiggle {
+            0% { transform: rotate(-2.5deg) scale(1.02); }
+            50% { transform: rotate(2.5deg) scale(0.98); }
+            100% { transform: rotate(-1.5deg) scale(1.03); }
+        }
+
         .hazel-node { background: var(--hazel); color: var(--yellow); }
         .yellow-node { background: var(--yellow); color: var(--hazel-dark); }
         
-        body.dark-mode .hazel-node { background: var(--hazel-dark); color: var(--yellow); }
-        body.dark-mode .yellow-node { background: var(--yellow); color: #121212; }
+        body.special-cyber-dark .hazel-node { background: var(--hazel-dark); color: var(--yellow); }
+        body.special-cyber-dark .yellow-node { background: var(--yellow); color: #121212; }
 
         .shape-squircle { border-radius: 46px; }
         .shape-flower { border-radius: 40% 60% 40% 60% / 60% 45% 55% 40%; }
         .shape-organic { border-radius: 60% 40% 60% 40% / 40% 60% 40% 60%; }
         .shape-rounded-star { border-radius: 35% 35% 35% 35% / 50% 50% 50% 50%; }
 
-        body.dark-mode .service-node { border-radius: 0 !important; }
-        body.dark-mode .shape-squircle { clip-path: polygon(10% 0, 100% 15%, 85% 100%, 0 90%); } 
-        body.dark-mode .shape-flower { clip-path: polygon(40% 0%, 100% 20%, 80% 100%, 20% 90%, 0% 40%); } 
-        body.dark-mode .shape-organic { clip-path: polygon(0% 15%, 100% 0%, 85% 100%, 15% 100%); } 
-        body.dark-mode .shape-rounded-star { clip-path: polygon(50% 0%, 100% 40%, 80% 100%, 20% 100%, 0% 40%); } 
+        body.special-cyber-dark .service-node { border-radius: 0 !important; }
+        body.special-cyber-dark .shape-squircle { clip-path: polygon(10% 0, 100% 15%, 85% 100%, 0 90%); } 
+        body.special-cyber-dark .shape-flower { clip-path: polygon(40% 0%, 100% 20%, 80% 100%, 20% 90%, 0% 40%); } 
+        body.special-cyber-dark .shape-organic { clip-path: polygon(0% 15%, 100% 0%, 85% 100%, 15% 100%); } 
+        body.special-cyber-dark .shape-rounded-star { clip-path: polygon(50% 0%, 100% 40%, 80% 100%, 20% 100%, 0% 40%); } 
 
         .node-1 { top: calc(50% - 310px); left: calc(50% - 65px); } 
         .node-2 { top: calc(50% - 238px); left: calc(50% + 108px); }
@@ -272,12 +386,14 @@
             gap: 25px;
             padding-top: 85px;
             margin-top: -85px;
-            transition: transform 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .card {
-            flex: 0 0 calc(50% - 13px);
-            background: var(--white);
+            flex: 0 0 calc(50% - 12.5px);
+            width: calc(50% - 12.5px);
+            min-width: calc(50% - 12.5px);
+            background: var(--card-bg);
             height: 320px;
             border-radius: 0 !important;
             box-shadow: 0 15px 35px rgba(0,0,0,0.08);
@@ -312,11 +428,11 @@
             overflow: hidden;
             position: relative;
         }
-        body.dark-mode .nasos-cyber-cover { background: #111; }
+        body.special-cyber-dark .nasos-cyber-cover { background: #111; }
 
         .nasos-cyber-text {
             font-family: 'Orbitron', 'JetBrains Mono', monospace;
-            font-size: clamp(12px, 3.2vw, 26px);
+            font-size: clamp(11px, 2.2vw, 20px);
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -340,18 +456,16 @@
             margin: 0 0 4px 0;
             font-size: 18px;
             font-weight: 900;
-            color: var(--hazel-dark);
+            color: var(--text-color);
             text-transform: uppercase;
         }
         .card-info p {
             margin: 0;
             font-size: 12px;
             line-height: 1.4;
-            color: #666;
+            color: var(--subtext-color);
             font-weight: 700;
         }
-        body.dark-mode .card-info h3 { color: var(--yellow); }
-        body.dark-mode .card-info p { color: #aaa; }
 
         .nav-arrow {
             position: absolute;
@@ -367,102 +481,239 @@
             cursor: pointer;
             z-index: 40;
             font-size: 22px;
-            box-shadow: 0 10px 20px rgba(95, 99, 79, 0.15);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
             transform: translateY(-50%) skewX(25deg);
             transition: all 0.4s ease;
         }
-        body.dark-mode .nav-arrow { 
+        body.special-cyber-dark .nav-arrow { 
             background: var(--hazel-dark); 
             border-radius: 0;
             clip-path: none;
         }
         .nav-arrow:hover {
-            background: var(--white);
+            background: #ffffff;
             color: var(--hazel);
             transform: translateY(-50%) skewX(25deg) scale(1.1);
         }
-        body.dark-mode .nav-arrow:hover { color: #111; }
+        body.special-cyber-dark .nav-arrow:hover { color: #111; }
         .arrow-left { left: 8px; }
         .arrow-right { right: 8px; }
 
+        /* === МОДАЛЬНЫЕ ОКНА === */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.45);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
+            background: rgba(0, 0, 0, 0.72);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.25s ease;
+            transition: opacity 0.3s ease;
+            padding: 20px;
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .nasos-modal-box {
-            background: #1a1a1a;
-            border: 3px solid var(--nasos-orange);
-            border-radius: 16px;
-            width: 580px;
-            max-width: 90%;
-            padding: 30px;
+
+        .modal-wrapper {
             position: relative;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
-            transform: scale(0.9);
-            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            font-family: 'JetBrains Mono', monospace;
-            text-align: center;
+            max-width: 680px;
+            width: 92%;
+            display: flex;
+            justify-content: center;
         }
-        .modal-overlay.active .nasos-modal-box { transform: scale(1); }
-        .modal-close-x {
+
+        .modal-parallelogram-solid {
+            position: relative;
+            background: var(--yellow);
+            transform: skewX(-25deg) scale(0.9);
+            padding: 34px 50px 26px 50px;
+            width: 100%;
+            box-shadow: none;
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: visible;
+        }
+        .modal-overlay.active .modal-parallelogram-solid {
+            transform: skewX(-25deg) scale(1);
+        }
+
+        .holder-dialog-bg {
+            background: var(--bg-clean) !important;
+            border: 2px solid var(--hazel);
+        }
+        .holder-dialog-bg .modal-title,
+        .holder-dialog-bg .modal-slogan {
+            color: var(--text-color) !important;
+        }
+        .holder-dialog-bg .modal-desc {
+            color: var(--text-color) !important;
+            opacity: 0.9;
+        }
+
+        .modal-badge-shape {
             position: absolute;
-            top: 15px;
-            right: 20px;
-            color: var(--nasos-orange);
-            font-size: 24px;
-            font-weight: 900;
+            top: -72px;
+            left: 50%;
+            transform: translateX(-50%) skewX(-25deg);
+            width: 135px;
+            height: 100px;
+            background: var(--hazel);
+            color: var(--yellow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: none;
+            z-index: 30;
+        }
+        .modal-badge-shape span {
+            transform: skewX(25deg) translateY(-44px);
+            font-size: 108px;
+            display: inline-block;
+            filter: drop-shadow(0 8px 18px rgba(0,0,0,0.4));
+        }
+
+        .android-badge-shape {
+            top: -95px;
+            width: 155px;
+            height: 120px;
+        }
+        .android-badge-shape svg {
+            transform: skewX(25deg) translateY(-52px);
+            width: 125px;
+            height: 125px;
+            fill: var(--yellow);
+            filter: drop-shadow(0 8px 18px rgba(0,0,0,0.4));
+        }
+
+        .holder-logo-direct {
+            position: absolute;
+            top: -85px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 135px;
+            height: 135px;
+            background: transparent;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .holder-logo-direct .avatar-direct {
+            width: 100%;
+            height: 100%;
+            background-image: url('5298742681573989917__1_-removebg-preview.png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: drop-shadow(0 8px 18px rgba(0,0,0,0.4));
+        }
+
+        .modal-close-tab {
+            position: absolute;
+            top: -18px;
+            right: -32px;
+            width: 68px;
+            height: 48px;
+            background: var(--hazel);
+            color: var(--yellow);
+            clip-path: polygon(15% 0%, 100% 0%, 85% 100%, 0% 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
+            z-index: 35;
+            box-shadow: none;
+            transition: background-color 0.2s, transform 0.2s;
             user-select: none;
         }
-        .modal-close-x:hover { transform: scale(1.1); }
+        .modal-close-tab svg {
+            transform: skewX(25deg);
+            width: 22px;
+            height: 22px;
+            stroke: currentColor;
+            stroke-width: 3.5;
+            stroke-linecap: round;
+        }
+        .modal-close-tab:hover {
+            background: var(--hazel-dark);
+            color: #ffffff;
+            transform: scale(1.1);
+        }
+
+        .modal-content-straight {
+            transform: skewX(25deg);
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-top: 8px;
+        }
+
         .modal-title {
-            color: var(--nasos-orange);
-            font-size: 42px;
+            color: var(--hazel-dark);
+            font-size: 26px;
             font-weight: 900;
-            margin: 10px 0 15px 0;
-            letter-spacing: 4px;
+            margin: 0 0 6px 0;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .modal-slogan {
+            color: var(--hazel-dark);
+            font-size: 16px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin: 0 0 8px 0;
+            opacity: 0.9;
         }
         .modal-desc {
-            color: var(--nasos-orange);
-            font-size: 14px;
-            line-height: 1.6;
+            color: var(--hazel);
+            font-size: 13px;
+            line-height: 1.45;
             font-weight: 700;
-            margin: 0 auto 30px auto;
-            max-width: 85%;
+            margin: 0 auto 20px auto;
+            max-width: 90%;
         }
-        .modal-actions-grid {
+        
+        .modal-actions-left {
             display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: flex-start;
+            width: 100%;
+            padding-left: 0;
         }
+        
         .modal-btn {
-            background: transparent;
-            border: 2px solid var(--nasos-orange);
-            color: var(--nasos-orange);
-            padding: 12px 30px;
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
-            font-size: 14px;
+            background: var(--hazel);
+            border: none;
+            color: var(--yellow);
+            padding: 12px 24px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 12px;
             text-transform: uppercase;
-            border-radius: 8px;
             cursor: pointer;
-            transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+            border-radius: 0 !important;
+            clip-path: none !important;
+            transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
         }
-        .modal-btn:hover { background: var(--nasos-orange); color: #1a1a1a; transform: translateY(-2px); }
+        .modal-btn:hover { background: #ffffff; color: var(--hazel-dark); transform: translateY(-2px); }
+
+        .modal-btn-giant {
+            width: 100%;
+            padding: 16px 32px;
+            font-size: 16px;
+            text-transform: lowercase !important;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
         footer {
             background: transparent;
@@ -471,7 +722,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             margin-top: auto;
             position: relative;
             z-index: 100;
@@ -481,13 +732,12 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            color: var(--hazel-dark);
+            color: var(--text-color);
             font-weight: 900;
             font-size: 24px;
             text-transform: uppercase;
             cursor: pointer;
         }
-        body.dark-mode .footer-logo-link { color: var(--yellow); }
         
         .footer-logo-shape {
             background: var(--yellow);
@@ -495,10 +745,20 @@
             clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
             color: var(--hazel-dark);
         }
-        body.dark-mode .footer-logo-shape { color: #111; }
+        body.special-cyber-dark .footer-logo-shape { color: #111; }
+
+        .footer-slogan {
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-color);
+            opacity: 0.8;
+            margin-top: -4px;
+        }
 
         .email-link {
-            color: var(--hazel);
+            color: var(--text-color);
             text-decoration: none;
             font-weight: 700;
             font-size: 15px;
@@ -509,20 +769,27 @@
             align-items: center;
             gap: 10px;
             background: var(--hazel);
-            color: var(--white);
+            color: var(--yellow);
             text-decoration: none;
             padding: 10px 24px;
             border-radius: 30px;
             font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
-            box-shadow: 0 8px 20px rgba(95, 99, 79, 0.15);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            cursor: pointer;
         }
-        body.dark-mode .app-button { background: var(--hazel-dark); color: var(--yellow); }
-        .app-button:hover { background: var(--yellow); color: var(--hazel); transform: translateY(-2px); }
-        body.dark-mode .app-button:hover { background: var(--yellow); color: #111; }
+        body.special-cyber-dark .app-button { background: var(--hazel-dark); color: var(--yellow); }
+        .app-button:hover { background: var(--yellow); color: var(--hazel-dark); transform: translateY(-2px); }
         .app-button svg { width: 16px; height: 16px; fill: currentColor; }
-        .copyright { font-size: 10px; font-weight: 700; opacity: 0.4; }
+        
+        .copyright {
+            font-size: 11px;
+            font-weight: 700;
+            opacity: 0.55;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
 
         @keyframes intro-spin {
             0% { transform: rotate(0deg); }
@@ -558,26 +825,29 @@
                 user-select: none;
             }
 
-            .theme-toggle {
+            .theme-controls-wrapper {
                 top: 15px;
                 right: 15px;
+                gap: 8px;
+            }
+
+            .theme-toggle,
+            .theme-cancel-btn {
                 width: 44px;
                 height: 44px;
             }
 
-            /* ДВИЖЕНИЕ 1: Барабан — наверх */
             .orbit-wrapper { 
                 display: flex !important; 
                 transform: scale(0.55, 0.75); 
-                margin-top: -100px; /* Сильно подняли барабан наверх */
+                margin-top: -100px;
                 margin-bottom: -150px; 
                 z-index: 10;
             }
 
-            /* ДВИЖЕНИЕ 2: Параллелограмм вместе со всем — ниже (дважды наверх по логике, смещаем позицию моста) */
             .content-section {
-                margin-top: 20px; /* Опустили полосу ниже, чтобы она встала куда надо */
-                background: #e8c627; 
+                margin-top: 20px;
+                background: var(--yellow); 
                 clip-path: polygon(0 35vw, 100% 0, 100% calc(100% - 35vw), 0% 100%);
                 padding-top: 25vw; 
                 padding-bottom: 22vw; 
@@ -587,7 +857,7 @@
                 position: relative;
                 z-index: 50;
             }
-            body.dark-mode .content-section {
+            body.special-cyber-dark .content-section {
                 background: #aab0b4;
             }
 
@@ -618,6 +888,7 @@
 
             .card { 
                 flex: 0 0 calc(50% - 6px); 
+                min-width: calc(50% - 6px);
                 height: 250px; 
                 border-radius: 0 !important; 
                 clip-path: polygon(0 10vw, 100% 0, 100% calc(100% - 10vw), 0% 100%);
@@ -628,10 +899,7 @@
             .card:nth-child(odd):hover { transform: translateY(5px); }
             .card:nth-child(even):hover { transform: translateY(calc(-5vw - 5px)); }
 
-            /* Область текста в ступеньках больше, картинки чуть меньше */
-            .card-img {
-                height: 48% !important;
-            }
+            .card-img { height: 48% !important; }
             .card-info {
                 height: 52% !important;
                 padding: 12px 15px; 
@@ -640,11 +908,10 @@
             .card-info h3 { font-size: 13px; margin-bottom: 2px; }
             .card-info p { font-size: 10px; line-height: 1.3; }
 
-            /* Стрелки чуть ниже */
             .carousel-viewport::after {
                 content: '';
                 position: absolute;
-                top: -15vw; /* Стрелки ниже */
+                top: -15vw;
                 right: 10px;
                 width: 90px;
                 height: 42px;
@@ -655,7 +922,7 @@
                 box-shadow: 0 4px 12px rgba(0,0,0,0.15);
                 transition: background 0.4s;
             }
-            body.dark-mode .carousel-viewport::after {
+            body.special-cyber-dark .carousel-viewport::after {
                 background: var(--hazel-dark);
             }
 
@@ -672,25 +939,121 @@
             .arrow-left { 
                 left: auto; 
                 right: 48px; 
-                top: -13.5vw; /* Стрелки ниже */
+                top: -13.5vw;
                 z-index: 40;
             }
             .arrow-right { 
                 right: 12px; 
-                top: -13.5vw; /* Стрелки ниже */
+                top: -13.5vw;
                 z-index: 40;
             }
-            
-            .nasos-cyber-text { font-size: 18px; }
+
+            .modal-overlay {
+                align-items: flex-end;
+                padding: 0;
+            }
+
+            .modal-wrapper {
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+            }
+
+            .modal-parallelogram-solid {
+                transform: translateY(100%);
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+                padding: 42vw 20px 30px 20px;
+                clip-path: polygon(0 34vw, 100% 0, 100% 100%, 0% 100%);
+                box-shadow: none;
+            }
+            .modal-overlay.active .modal-parallelogram-solid {
+                transform: translateY(0);
+            }
+
+            .modal-badge-shape {
+                top: -6vw;
+                left: 50%;
+                width: 145px;
+                height: 135px;
+                transform: translateX(-50%) skewX(-20deg);
+                box-shadow: none;
+            }
+            .modal-badge-shape span {
+                transform: skewX(20deg) translateY(-44px);
+                font-size: 102px;
+            }
+
+            .android-badge-shape {
+                top: -8vw;
+                width: 155px;
+                height: 145px;
+            }
+            .android-badge-shape svg {
+                transform: skewX(20deg) translateY(-48px);
+                width: 110px;
+                height: 110px;
+            }
+
+            .holder-logo-direct {
+                top: -10vw;
+                width: 140px;
+                height: 140px;
+            }
+
+            .modal-close-tab {
+                top: 0.5vw;
+                right: 15px;
+                width: 56px;
+                height: 40px;
+                transform: none;
+                clip-path: polygon(15% 0%, 100% 0%, 85% 100%, 0% 100%);
+                box-shadow: none;
+            }
+            .modal-close-tab svg {
+                transform: none;
+                width: 20px;
+                height: 20px;
+            }
+
+            .modal-content-straight {
+                transform: none;
+                margin-top: 0;
+            }
+            .modal-title { font-size: 22px; }
+            .modal-slogan { font-size: 14px; margin-bottom: 6px; }
+            .modal-desc { font-size: 12px; line-height: 1.4; margin-bottom: 20px; }
+            .modal-actions-left {
+                justify-content: center;
+                gap: 8px;
+            }
+            .modal-btn {
+                padding: 12px 18px;
+                font-size: 11px;
+            }
+            .modal-btn-giant {
+                padding: 14px 24px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="theme-toggle" onclick="toggleTheme()" title="Сменить тему">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 3C7.03 3 3 7.03 3 12C3 16.97 7.03 21 12 21C16.97 21 21 16.97 21 12C21 7.03 16.97 3 12 3ZM12 19.5V4.5C16.14 4.5 19.5 7.86 19.5 12C19.5 16.14 16.14 19.5 12 19.5Z"/>
-        </svg>
+    <div class="theme-controls-wrapper">
+        <div class="theme-toggle" id="themeBtn" title="Клик: выбор цвета / смена темы">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 3C7.03 3 3 7.03 3 12C3 16.97 7.03 21 12 21C16.97 21 21 16.97 21 12C21 7.03 16.97 3 12 3ZM12 19.5V4.5C16.14 4.5 19.5 7.86 19.5 12C19.5 16.14 16.14 19.5 12 19.5Z"/>
+            </svg>
+            <div class="theme-dot-indicator"></div>
+        </div>
+        <div class="theme-cancel-btn" id="themeCancelBtn" title="Закрыть выбор темы">
+            <svg viewBox="0 0 24 24" fill="none">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </div>
     </div>
 
     <div class="top-left-brand" onclick="window.location.reload()">
@@ -716,26 +1079,26 @@
     <div class="hub-container">
         
         <div class="orbit-wrapper">
-            <div class="central-logo" onclick="window.open('https://t.me/nasoseco', '_blank')">
+            <div class="central-logo" onclick="openHolderModal()">
                 <div class="avatar-mock" title="Экосистема Насоуса"></div>
             </div>
             
-            <div class="rotator-zonal">
-                <a href="https://youtube.com/@vodyala" target="_blank" class="service-node hazel-node shape-squircle node-1">YOUTUBE</a>
-                <a href="https://t.me/vodyalayoutube" target="_blank" class="service-node yellow-node shape-flower node-2">TELEGRAM</a>
-                <a href="https://dzen.ru/id/6223a10a9ab6767e3451fc15" target="_blank" class="service-node hazel-node shape-organic node-3">ДЗЕН</a>
-                <a href="https://m.vk.com/id692819808" target="_blank" class="service-node yellow-node shape-rounded-star node-4">ВК</a>
-                <a href="https://www.tiktok.com/@vodyala" target="_blank" class="service-node hazel-node shape-squircle node-5">TIKTOK</a>
-                <a href="https://www.soundcloud.com/vodyala" target="_blank" class="service-node yellow-node shape-flower node-6">SOUNDCLOUD</a>
-                <a href="https://www.roblox.com/users/1650696052/profile" target="_blank" class="service-node hazel-node shape-organic node-7">ROBLOX</a>
-                <a href="https://t.me/vodyalayoutubepaygroup" target="_blank" class="service-node yellow-node shape-rounded-star node-8">BOOSTY</a>
+            <div class="rotator-zonal" id="rotatorZonal">
+                <a href="https://youtube.com/@vodyala" target="_blank" class="service-node hazel-node shape-squircle node-1" data-node="0">YOUTUBE</a>
+                <a href="https://t.me/vodyalayoutube" target="_blank" class="service-node yellow-node shape-flower node-2" data-node="1">TELEGRAM</a>
+                <a href="https://dzen.ru/id/6223a10a9ab6767e3451fc15" target="_blank" class="service-node hazel-node shape-organic node-3" data-node="2">ДЗЕН</a>
+                <a href="https://m.vk.com/id692819808" target="_blank" class="service-node yellow-node shape-rounded-star node-4" data-node="3">ВК</a>
+                <a href="https://www.tiktok.com/@vodyala" target="_blank" class="service-node hazel-node shape-squircle node-5" data-node="4">TIKTOK</a>
+                <a href="https://www.soundcloud.com/vodyala" target="_blank" class="service-node yellow-node shape-flower node-6" data-node="5">SOUNDCLOUD</a>
+                <a href="https://www.roblox.com/users/1650696052/profile" target="_blank" class="service-node hazel-node shape-organic node-7" data-node="6">ROBLOX</a>
+                <a href="https://t.me/vodyalayoutubepaygroup" target="_blank" class="service-node yellow-node shape-rounded-star node-8" data-node="7">BOOSTY</a>
             </div>
         </div>
 
         <div class="content-section">
             <div class="parallelogram-container">
                 <div class="nav-arrow arrow-left" id="prevBtn">‹</div>
-                <div class="carousel-viewport">
+                <div class="carousel-viewport" id="carouselViewport">
                     <div class="carousel-track" id="track">
                         
                         <div class="card" onclick="window.open('https://youtube.com/@vodyala', '_blank')">
@@ -760,11 +1123,11 @@
 
                         <div class="card" onclick="window.open('https://www.youtube.com/@IttsuGuides', '_blank')">
                             <div class="card-img">
-                                <img src="https://yt3.googleusercontent.com/wIIFxIY9FcPwGhq_b1EsYQh0XWODkeqEFhdFArd176CIUdDkSSfx20eZhZUC2PgESMixEjUCfg=w1060" alt="ИТТСУ Гайды">
+                                <img src="https://yt3.googleusercontent.com/wIIFxIY9FcPwGhq_b1EsYQh0XWODkeqEFhdFArd176CIUdDkSSfx20eZhZUC2PgESMixEjUCfg=w1060" alt="ИЖ ТЫ ГАЙД">
                             </div>
                             <div class="card-info">
-                                <h3>Гайды для ИТТСУ</h3>
-                                <p>Спасение студентов РУТ (МИИТ). Стримтенсивы, базы данных, SQL и зачеты</p>
+                                <h3>ИЖ ТЫ ГАЙД</h3>
+                                <p>Гайды для ИЖТ. Помощь для студентов по информатике</p>
                             </div>
                         </div>
 
@@ -787,15 +1150,79 @@
         </div>
     </div>
 
+    <!-- ВСПЛЫВАЮЩИЙ ПАРАЛЛЕЛОГРАММ СВИДЕТЕЛЕЙ НАСОУСА -->
     <div class="modal-overlay" id="nasosModal" onclick="closeNasosModal(event)">
-        <div class="nasos-modal-box" onclick="event.stopPropagation()">
-            <div class="modal-close-x" onclick="closeNasosModal(null)">✕✕✕</div>
-            <div class="modal-title">NASOS</div>
-            <div class="modal-desc">Это общество свидетелей Насоуса с фирменными мемами, треками, стикерами и контентом. Насоооооооооуууус🤘</div>
-            <div class="modal-actions-grid">
-                <button class="modal-btn" onclick="window.open('https://t.me/nasoooooooos', '_blank')">Войти</button>
-                <button class="modal-btn" onclick="window.open('https://www.soundcloud.com/vodyala', '_blank')">Треки</button>
-                <button class="modal-btn" onclick="window.open('https://t.me/addstickers/NasosStickers', '_blank')">Стикеры</button>
+        <div class="modal-wrapper" onclick="event.stopPropagation()">
+            <div class="modal-badge-shape"><span>🤘</span></div>
+            <div class="modal-parallelogram-solid">
+                <div class="modal-close-tab" onclick="closeNasosModal(null)">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </div>
+                
+                <div class="modal-content-straight">
+                    <div class="modal-title">СВИДЕТЕЛИ НАСОУСА</div>
+                    <div class="modal-desc">Фирменные мемы, эксклюзивные треки, сочные стикерпаки и ламповое общество единомышленников. Насоооооооооуууус!</div>
+                    <div class="modal-actions-left">
+                        <button class="modal-btn" onclick="window.open('https://t.me/nasoooooooos', '_blank')">Войти в Чат</button>
+                        <button class="modal-btn" onclick="window.open('https://www.soundcloud.com/vodyala', '_blank')">Треки</button>
+                        <button class="modal-btn" onclick="window.open('https://t.me/addstickers/NasosStickers', '_blank')">Стикеры</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ВСПЛЫВАЮЩИЙ ПАРАЛЛЕЛОГРАММ ANDROID APP -->
+    <div class="modal-overlay" id="androidModal" onclick="closeAndroidModal(event)">
+        <div class="modal-wrapper" onclick="event.stopPropagation()">
+            <div class="modal-badge-shape android-badge-shape">
+                <svg viewBox="0 0 24 24">
+                    <path d="M17.523 15.3l1.816 3.146a.5.5 0 0 1-.175.683l-.11.063a.5.5 0 0 1-.683-.175L16.54 15.85a11.1 11.1 0 0 1-4.54 1.01 11.1 11.1 0 0 1-4.54-1.01l-1.83 3.167a.5.5 0 0 1-.684.175l-.11-.063a.5.5 0 0 1-.175-.683l1.816-3.146A10.155 10.155 0 0 1 2.1 7.23a.5.5 0 0 1 .466-.41h18.868a.5.5 0 0 1 .466.41 10.145 10.145 0 0 1-4.377 8.07zM7 10.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5zm10 0a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5z"/>
+                </svg>
+            </div>
+            <div class="modal-parallelogram-solid">
+                <div class="modal-close-tab" onclick="closeAndroidModal(null)">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </div>
+                
+                <div class="modal-content-straight">
+                    <div class="modal-title">ANDROID APP</div>
+                    <div class="modal-desc">Добавьте веб-приложение как истинный фанат Насоуса. Раньше у нас было приложение на андроид, оно уже устарело.</div>
+                    <div class="modal-actions-left">
+                        <button class="modal-btn" onclick="window.open('https://vodyala.github.io/vodyalaapp.github.io/', '_blank')">Скачать</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ВСПЛЫВАЮЩИЙ ПАРАЛЛЕЛОГРАММ ХОЛДЕРА (@NASOSECO) -->
+    <div class="modal-overlay" id="holderModal" onclick="closeHolderModal(event)">
+        <div class="modal-wrapper" onclick="event.stopPropagation()">
+            <div class="holder-logo-direct">
+                <div class="avatar-direct"></div>
+            </div>
+            <div class="modal-parallelogram-solid holder-dialog-bg">
+                <div class="modal-close-tab" onclick="closeHolderModal(null)">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </div>
+                
+                <div class="modal-content-straight">
+                    <div class="modal-slogan">Full of sauce.</div>
+                    <div class="modal-desc">Я Холдер. Это значит что я держу эту экосистему, я блогер, влогер, стример, музыкальный исполнитель, режиссер, менеджер, наставник и центр своей экосистемы. Раньше меня знали как просто Vodyala, а теперь я не просто Vodyala, а Насоус. Мы полны соуса — переходите в холдинг.</div>
+                    <div class="modal-actions-left" style="width: 100%;">
+                        <button class="modal-btn modal-btn-giant" onclick="window.open('https://t.me/nasoseco', '_blank')">@nasoseco</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -806,68 +1233,257 @@
             <span>Экосистема Насоуса</span>
         </div>
         <a href="mailto:nasoooooooos@mail.ru" class="email-link">nasoooooooos@mail.ru</a>
-        <a href="https://vodyala.github.io/vodyalaapp.github.io/" target="_blank" class="app-button">
+        <div class="app-button" id="appAndroidBtn">
             <svg viewBox="0 0 24 24">
                 <path d="M17.523 15.3l1.816 3.146a.5.5 0 0 1-.175.683l-.11.063a.5.5 0 0 1-.683-.175L16.54 15.85a11.1 11.1 0 0 1-4.54 1.01 11.1 11.1 0 0 1-4.54-1.01l-1.83 3.167a.5.5 0 0 1-.684.175l-.11-.063a.5.5 0 0 1-.175-.683l1.816-3.146A10.155 10.155 0 0 1 2.1 7.23a.5.5 0 0 1 .466-.41h18.868a.5.5 0 0 1 .466.41 10.145 10.145 0 0 1-4.377 8.07zM7 10.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5zm10 0a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5z"/>
             </svg>
             App Android
-        </a>
+        </div>
         <div class="copyright">© 2026 Holding Nasos Systems</div>
     </footer>
 
     <script>
-        function toggleTheme() {
-            document.body.classList.add('theme-transitioning');
-            
-            setTimeout(() => {
-                document.body.classList.toggle('dark-mode');
-            }, 200);
+        const originalServices = [
+            { text: "YOUTUBE", href: "https://youtube.com/@vodyala" },
+            { text: "TELEGRAM", href: "https://t.me/vodyalayoutube" },
+            { text: "ДЗЕН", href: "https://dzen.ru/id/6223a10a9ab6767e3451fc15" },
+            { text: "ВК", href: "https://m.vk.com/id692819808" },
+            { text: "TIKTOK", href: "https://www.tiktok.com/@vodyala" },
+            { text: "SOUNDCLOUD", href: "https://www.soundcloud.com/vodyala" },
+            { text: "ROBLOX", href: "https://www.roblox.com/users/1650696052/profile" },
+            { text: "BOOSTY", href: "https://t.me/vodyalayoutubepaygroup" }
+        ];
 
-            setTimeout(() => {
-                document.body.classList.remove('theme-transitioning');
-            }, 450);
+        // Залитые Material 3 фоны для месяцев
+        const monthPalettes = [
+            /* 0: Январь */   { isSpecialDark: false, isDefault: false, yellow: '#2563EB', hazel: '#1E3A8A', hazelDark: '#0F172A', bgLight: '#BFDBFE', bgDark: '#0B1528', filter: 'hue-rotate(185deg) saturate(1.5)' },
+            /* 1: Февраль */  { isSpecialDark: false, isDefault: false, yellow: '#7C3AED', hazel: '#4C1D95', hazelDark: '#2E1065', bgLight: '#DDD6FE', bgDark: '#170B2C', filter: 'hue-rotate(225deg) saturate(1.5)' },
+            /* 2: Март */     { isSpecialDark: false, isDefault: false, yellow: '#65A30D', hazel: '#365314', hazelDark: '#1A2E05', bgLight: '#D9F99D', bgDark: '#0F1C03', filter: 'hue-rotate(70deg) saturate(1.7)' },
+            /* 3: Апрель */   { isSpecialDark: false, isDefault: false, yellow: '#0891B2', hazel: '#164E63', hazelDark: '#083344', bgLight: '#A5F3FC', bgDark: '#041B24', filter: 'hue-rotate(150deg) saturate(1.4)' },
+            /* 4: Май */      { isSpecialDark: false, isDefault: false, yellow: '#16A34A', hazel: '#14532D', hazelDark: '#052E16', bgLight: '#BBF7D0', bgDark: '#021C0D', filter: 'hue-rotate(50deg) saturate(1.5)' },
+            /* 5: Июнь */     { isSpecialDark: false, isDefault: true,  yellow: '#fdd835', hazel: '#5f634f', hazelDark: '#494d3d', bgLight: '#fdfdfa', bgDark: '#121212', filter: 'none' },
+            /* 6: Июль */     { isSpecialDark: false, isDefault: false, yellow: '#0284C7', hazel: '#0C4A6E', hazelDark: '#082F49', bgLight: '#BAE6FD', bgDark: '#051D2E', filter: 'hue-rotate(195deg) saturate(1.6)' },
+            /* 7: Август */   { isSpecialDark: false, isDefault: false, yellow: '#D97706', hazel: '#78350F', hazelDark: '#451A03', bgLight: '#FDE68A', bgDark: '#260F02', filter: 'hue-rotate(345deg) saturate(1.4)' },
+            /* 8: Сентябрь */ { isSpecialDark: false, isDefault: false, yellow: '#EA580C', hazel: '#7C2D12', hazelDark: '#431407', bgLight: '#FED7AA', bgDark: '#240B04', filter: 'hue-rotate(355deg) saturate(1.6)' },
+            /* 9: Октябрь */  { isSpecialDark: false, isDefault: false, yellow: '#DC2626', hazel: '#7F1D1D', hazelDark: '#450A0A', bgLight: '#FECACA', bgDark: '#260606', filter: 'hue-rotate(330deg) saturate(1.7)' },
+            /* 10: Ноябрь */  { isSpecialDark: false, isDefault: false, yellow: '#E11D48', hazel: '#881337', hazelDark: '#4C0519', bgLight: '#FECDD3', bgDark: '#24030C', filter: 'hue-rotate(310deg) saturate(1.5)' },
+            /* 11: Декабрь */ { isSpecialDark: false, isDefault: false, yellow: '#06B6D4', hazel: '#155E75', hazelDark: '#0E3B4A', bgLight: '#A5F3FC', bgDark: '#061E26', filter: 'hue-rotate(145deg) saturate(1.5)' }
+        ];
+
+        // Палитры для выбора в барабане
+        const paletteChoices = [
+            { isSpecialDark: false, isDefault: true,  yellow: '#fdd835', hazel: '#5f634f', hazelDark: '#494d3d', bgLight: '#fdfdfa', bgDark: '#121212', filter: 'none' },
+            { isSpecialDark: false, isDefault: false, yellow: '#2563EB', hazel: '#1E3A8A', hazelDark: '#0F172A', bgLight: '#BFDBFE', bgDark: '#0B1528', filter: 'hue-rotate(185deg) saturate(1.5)' },
+            { isSpecialDark: false, isDefault: false, yellow: '#65A30D', hazel: '#365314', hazelDark: '#1A2E05', bgLight: '#D9F99D', bgDark: '#0F1C03', filter: 'hue-rotate(70deg) saturate(1.7)' },
+            { isSpecialDark: false, isDefault: false, yellow: '#EA580C', hazel: '#7C2D12', hazelDark: '#431407', bgLight: '#FED7AA', bgDark: '#240B04', filter: 'hue-rotate(355deg) saturate(1.6)' },
+            { isSpecialDark: false, isDefault: false, yellow: '#7C3AED', hazel: '#4C1D95', hazelDark: '#2E1065', bgLight: '#DDD6FE', bgDark: '#170B2C', filter: 'hue-rotate(225deg) saturate(1.5)' },
+            { isSpecialDark: false, isDefault: false, yellow: '#D97706', hazel: '#78350F', hazelDark: '#451A03', bgLight: '#FDE68A', bgDark: '#260F02', filter: 'hue-rotate(345deg) saturate(1.4)' },
+            { isSpecialDark: false, isDefault: false, yellow: '#0891B2', hazel: '#164E63', hazelDark: '#083344', bgLight: '#A5F3FC', bgDark: '#041B24', filter: 'hue-rotate(150deg) saturate(1.4)' },
+            { isSpecialDark: false, isDefault: false, yellow: '#DB2777', hazel: '#831843', hazelDark: '#500727', bgLight: '#FBCFE8', bgDark: '#260413', filter: 'hue-rotate(295deg) saturate(1.7)' }
+        ];
+
+        let isThemeModeActive = false;
+        let activePalette = monthPalettes[5];
+        const serviceNodes = document.querySelectorAll('.service-node');
+        const rotatorZonal = document.getElementById('rotatorZonal');
+
+        function isDarkModeActive() {
+            const isSystemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            return document.body.classList.contains('mode-dark') || 
+                   (!document.body.classList.contains('mode-light') && isSystemDark);
         }
 
+        function applyPalette(p) {
+            activePalette = p;
+            if (p.isSpecialDark) {
+                document.body.classList.add('special-cyber-dark');
+                document.documentElement.style.removeProperty('--yellow');
+                document.documentElement.style.removeProperty('--hazel');
+                document.documentElement.style.removeProperty('--hazel-dark');
+                document.documentElement.style.removeProperty('--bg-clean');
+                document.documentElement.style.removeProperty('--logo-filter');
+                return;
+            }
+
+            document.body.classList.remove('special-cyber-dark');
+            document.documentElement.style.setProperty('--yellow', p.yellow);
+            document.documentElement.style.setProperty('--hazel', p.hazel);
+            document.documentElement.style.setProperty('--hazel-dark', p.hazelDark);
+            document.documentElement.style.setProperty('--logo-filter', p.filter);
+            
+            const dark = isDarkModeActive();
+            document.documentElement.style.setProperty('--bg-clean', dark ? p.bgDark : p.bgLight);
+        }
+
+        function initSeasonTheme() {
+            const now = new Date();
+            const month = now.getMonth();
+            const date = now.getDate();
+
+            if (month === 9 && date === 31) {
+                applyPalette({ isSpecialDark: true });
+            } else {
+                applyPalette(monthPalettes[month]);
+            }
+        }
+        initSeasonTheme();
+
+        function restartRotatorAnimation() {
+            rotatorZonal.style.animation = 'none';
+            serviceNodes.forEach(node => node.style.animation = 'none');
+            
+            void rotatorZonal.offsetWidth;
+            
+            rotatorZonal.style.animation = 'intro-spin 4s cubic-bezier(0.05, 0.7, 0.1, 1) 1, continuous-slow 60s linear 4s infinite';
+            serviceNodes.forEach(node => {
+                node.style.animation = 'intro-spin-reverse 4s cubic-bezier(0.05, 0.7, 0.1, 1) 1, continuous-slow-reverse 60s linear 4s infinite';
+            });
+        }
+
+        function toggleBackgroundTheme() {
+            document.body.classList.add('theme-transitioning');
+            setTimeout(() => {
+                const isDark = isDarkModeActive();
+                document.body.classList.remove('special-cyber-dark');
+
+                if (isDark) {
+                    document.body.classList.remove('mode-dark');
+                    document.body.classList.add('mode-light');
+                    document.documentElement.style.setProperty('--bg-clean', activePalette.bgLight);
+                } else {
+                    document.body.classList.remove('mode-light');
+                    document.body.classList.add('mode-dark');
+                    document.documentElement.style.setProperty('--bg-clean', activePalette.bgDark);
+                }
+            }, 200);
+            setTimeout(() => { document.body.classList.remove('theme-transitioning'); }, 450);
+        }
+
+        function enterThemeSelectMode() {
+            isThemeModeActive = true;
+            document.body.classList.add('palette-mode-active');
+            if (navigator.vibrate) navigator.vibrate(60);
+
+            serviceNodes.forEach((node, index) => {
+                const p = paletteChoices[index];
+                node.innerText = "";
+                node.style.setProperty('background', p.yellow, 'important');
+                node.removeAttribute('href');
+                node.removeAttribute('target');
+            });
+        }
+
+        function exitThemeSelectMode() {
+            isThemeModeActive = false;
+            document.body.classList.remove('palette-mode-active');
+            serviceNodes.forEach((node, index) => {
+                const orig = originalServices[index];
+                node.innerText = orig.text;
+                node.href = orig.href;
+                node.target = "_blank";
+                node.style.removeProperty('background');
+            });
+            restartRotatorAnimation();
+        }
+
+        serviceNodes.forEach((node, index) => {
+            node.addEventListener('click', (e) => {
+                if (isThemeModeActive) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    applyPalette(paletteChoices[index]);
+                    exitThemeSelectMode();
+                }
+            });
+        });
+
+        const appAndroidBtn = document.getElementById('appAndroidBtn');
+        const androidModal = document.getElementById('androidModal');
+        const nasosModal = document.getElementById('nasosModal');
+        const holderModal = document.getElementById('holderModal');
+
+        appAndroidBtn.addEventListener('click', (e) => {
+            if (isThemeModeActive) {
+                e.preventDefault();
+                applyPalette({ isSpecialDark: true });
+                exitThemeSelectMode();
+            } else {
+                openAndroidModal();
+            }
+        });
+
+        function openAndroidModal() { androidModal.classList.add('active'); }
+        function closeAndroidModal(e) {
+            if(!e || e.target === androidModal || e.target.classList.contains('modal-close-tab') || e.target.closest('.modal-close-tab')) {
+                androidModal.classList.remove('active');
+            }
+        }
+
+        function openNasosModal() { nasosModal.classList.add('active'); }
+        function closeNasosModal(e) {
+            if(!e || e.target === nasosModal || e.target.classList.contains('modal-close-tab') || e.target.closest('.modal-close-tab')) {
+                nasosModal.classList.remove('active');
+            }
+        }
+
+        function openHolderModal() { 
+            applyPalette(monthPalettes[5]);
+            if (isThemeModeActive) {
+                exitThemeSelectMode();
+            }
+            holderModal.classList.add('active'); 
+        }
+        function closeHolderModal(e) {
+            if(!e || e.target === holderModal || e.target.classList.contains('modal-close-tab') || e.target.closest('.modal-close-tab')) {
+                holderModal.classList.remove('active');
+            }
+        }
+
+        const themeBtn = document.getElementById('themeBtn');
+        const themeCancelBtn = document.getElementById('themeCancelBtn');
+
+        themeBtn.addEventListener('click', () => {
+            if (!isThemeModeActive) {
+                enterThemeSelectMode();
+            } else {
+                toggleBackgroundTheme();
+            }
+        });
+
+        themeCancelBtn.addEventListener('click', () => {
+            if (isThemeModeActive) {
+                exitThemeSelectMode();
+            }
+        });
+
+        // === Карусель 2 по 2 на десктопе ===
         const track = document.getElementById('track');
+        const carouselViewport = document.getElementById('carouselViewport');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
-        const cards = document.querySelectorAll('.card');
-        const nasosModal = document.getElementById('nasosModal');
-        let index = 0;
-
-        function getCardsPerView() { 
-            return window.innerWidth <= 768 ? 2 : 2; 
-        }
+        let currentPage = 0; 
 
         function updateCarousel() {
-            const cardWidth = cards[0].getBoundingClientRect().width;
-            const gap = window.innerWidth <= 768 ? 12 : 25; 
-            const amountToMove = (cardWidth + gap) * index;
-            track.style.transform = `translateX(-${amountToMove}px)`;
+            if (window.innerWidth <= 768) {
+                const card = track.querySelector('.card');
+                const cardWidth = card.getBoundingClientRect().width;
+                const gap = 12;
+                track.style.transform = `translateX(-${(cardWidth + gap) * 2 * currentPage}px)`;
+            } else {
+                const viewportWidth = carouselViewport.clientWidth;
+                track.style.transform = `translateX(-${(viewportWidth + 25) * currentPage}px)`;
+            }
         }
 
         nextBtn.addEventListener('click', () => {
-            const cardsPerView = getCardsPerView();
-            const maxIndex = cards.length - cardsPerView;
-            index = (index + cardsPerView <= maxIndex) ? index + cardsPerView : 0;
+            currentPage = (currentPage === 0) ? 1 : 0;
             updateCarousel();
         });
 
         prevBtn.addEventListener('click', () => {
-            const cardsPerView = getCardsPerView();
-            index = (index - cardsPerView >= 0) ? index - cardsPerView : cards.length - cardsPerView;
+            currentPage = (currentPage === 1) ? 0 : 1;
             updateCarousel();
         });
-
-        function openNasosModal() {
-            nasosModal.classList.add('active');
-        }
-
-        function closeNasosModal(e) {
-            if(!e || e.target === nasosModal || e.target.classList.contains('modal-close-x')) {
-                nasosModal.classList.remove('active');
-            }
-        }
 
         window.addEventListener('resize', updateCarousel);
     </script>
